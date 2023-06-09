@@ -1,0 +1,6 @@
+module Pods_LinkeAdmin {
+  umbrella header "Pods-LinkeAdmin-umbrella.h"
+
+  export *
+  module * { export * }
+}

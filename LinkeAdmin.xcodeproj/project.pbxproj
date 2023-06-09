@@ -11,6 +11,22 @@
 		0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */; };
 		0BDB4DE12A292E7E00B0AEE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BDB4DE02A292E7E00B0AEE1 /* Assets.xcassets */; };
 		0BDB4DE42A292E7E00B0AEE1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BDB4DE32A292E7E00B0AEE1 /* Preview Assets.xcassets */; };
+		0BDB4DEC2A292EEE00B0AEE1 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDB4DEB2A292EEE00B0AEE1 /* FirebaseFirestore */; };
+		0BDB4DEE2A292EEE00B0AEE1 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDB4DED2A292EEE00B0AEE1 /* FirebaseFirestoreSwift */; };
+		0BDB4DF02A292F1800B0AEE1 /* ViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DEF2A292F1700B0AEE1 /* ViewRouter.swift */; };
+		0BDB4DF32A292F4800B0AEE1 /* GoogleSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DF22A292F4800B0AEE1 /* GoogleSignInView.swift */; };
+		0BDB4DF52A292F7400B0AEE1 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */; };
+		0BDB4DF72A292F9900B0AEE1 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DF62A292F9900B0AEE1 /* HomeView.swift */; };
+		0BDB4DFA2A29353600B0AEE1 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DF92A29353600B0AEE1 /* Team.swift */; };
+		0BDB4DFC2A29354200B0AEE1 /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DFB2A29354200B0AEE1 /* Student.swift */; };
+		0BDB4DFF2A2935D600B0AEE1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DFE2A2935D600B0AEE1 /* User.swift */; };
+		0BDB4E012A2935FE00B0AEE1 /* Admin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4E002A2935FE00B0AEE1 /* Admin.swift */; };
+		0BDB4E042A29371200B0AEE1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BDB4E032A29371200B0AEE1 /* GoogleService-Info.plist */; };
+		0BDB4E062A295A8C00B0AEE1 /* StudentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4E052A295A8C00B0AEE1 /* StudentView.swift */; };
+		0BEFD78A2A2AC12E004A892F /* Classroom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEFD7892A2AC12E004A892F /* Classroom.swift */; };
+		0BEFD78C2A2AC17B004A892F /* Assignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEFD78B2A2AC17A004A892F /* Assignment.swift */; };
+		0BEFD78E2A2D6C39004A892F /* ClassroomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEFD78D2A2D6C39004A892F /* ClassroomView.swift */; };
+		6272FAD92562808FCC8F4303 /* libPods-LinkeAdmin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 89176B94F230968B239E5E39 /* libPods-LinkeAdmin.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +35,23 @@
 		0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0BDB4DE02A292E7E00B0AEE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0BDB4DE32A292E7E00B0AEE1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		0BDB4DEF2A292F1700B0AEE1 /* ViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.swift; sourceTree = "<group>"; };
+		0BDB4DF22A292F4800B0AEE1 /* GoogleSignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSignInView.swift; sourceTree = "<group>"; };
+		0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		0BDB4DF62A292F9900B0AEE1 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		0BDB4DF92A29353600B0AEE1 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		0BDB4DFB2A29354200B0AEE1 /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
+		0BDB4DFE2A2935D600B0AEE1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		0BDB4E002A2935FE00B0AEE1 /* Admin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Admin.swift; sourceTree = "<group>"; };
+		0BDB4E022A29364200B0AEE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0BDB4E032A29371200B0AEE1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0BDB4E052A295A8C00B0AEE1 /* StudentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentView.swift; sourceTree = "<group>"; };
+		0BEFD7892A2AC12E004A892F /* Classroom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classroom.swift; sourceTree = "<group>"; };
+		0BEFD78B2A2AC17A004A892F /* Assignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assignment.swift; sourceTree = "<group>"; };
+		0BEFD78D2A2D6C39004A892F /* ClassroomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassroomView.swift; sourceTree = "<group>"; };
+		89176B94F230968B239E5E39 /* libPods-LinkeAdmin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LinkeAdmin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A823685D043CD2E50AC922D8 /* Pods-LinkeAdmin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkeAdmin.release.xcconfig"; path = "Target Support Files/Pods-LinkeAdmin/Pods-LinkeAdmin.release.xcconfig"; sourceTree = "<group>"; };
+		D574251EF883FC1C1EEACA6B /* Pods-LinkeAdmin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkeAdmin.debug.xcconfig"; path = "Target Support Files/Pods-LinkeAdmin/Pods-LinkeAdmin.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +59,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6272FAD92562808FCC8F4303 /* libPods-LinkeAdmin.a in Frameworks */,
+				0BDB4DEC2A292EEE00B0AEE1 /* FirebaseFirestore in Frameworks */,
+				0BDB4DEE2A292EEE00B0AEE1 /* FirebaseFirestoreSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +73,8 @@
 			children = (
 				0BDB4DDB2A292E7D00B0AEE1 /* LinkeAdmin */,
 				0BDB4DDA2A292E7D00B0AEE1 /* Products */,
+				FE9692FA7C722FDF6E93EEFC /* Pods */,
+				D14CCA8954BF646AEF397AD1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -51,8 +89,12 @@
 		0BDB4DDB2A292E7D00B0AEE1 /* LinkeAdmin */ = {
 			isa = PBXGroup;
 			children = (
+				0BDB4E022A29364200B0AEE1 /* Info.plist */,
+				0BDB4DF82A29350A00B0AEE1 /* API */,
+				0BDB4DF12A292F3600B0AEE1 /* Views */,
 				0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */,
-				0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */,
+				0BDB4DEF2A292F1700B0AEE1 /* ViewRouter.swift */,
+				0BDB4E032A29371200B0AEE1 /* GoogleService-Info.plist */,
 				0BDB4DE02A292E7E00B0AEE1 /* Assets.xcassets */,
 				0BDB4DE22A292E7E00B0AEE1 /* Preview Content */,
 			);
@@ -67,6 +109,49 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		0BDB4DF12A292F3600B0AEE1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0BDB4DF22A292F4800B0AEE1 /* GoogleSignInView.swift */,
+				0BDB4E052A295A8C00B0AEE1 /* StudentView.swift */,
+				0BEFD78D2A2D6C39004A892F /* ClassroomView.swift */,
+				0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */,
+				0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */,
+				0BDB4DF62A292F9900B0AEE1 /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0BDB4DF82A29350A00B0AEE1 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				0BDB4DF92A29353600B0AEE1 /* Team.swift */,
+				0BDB4DFE2A2935D600B0AEE1 /* User.swift */,
+				0BDB4DFB2A29354200B0AEE1 /* Student.swift */,
+				0BDB4E002A2935FE00B0AEE1 /* Admin.swift */,
+				0BEFD7892A2AC12E004A892F /* Classroom.swift */,
+				0BEFD78B2A2AC17A004A892F /* Assignment.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		D14CCA8954BF646AEF397AD1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				89176B94F230968B239E5E39 /* libPods-LinkeAdmin.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FE9692FA7C722FDF6E93EEFC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D574251EF883FC1C1EEACA6B /* Pods-LinkeAdmin.debug.xcconfig */,
+				A823685D043CD2E50AC922D8 /* Pods-LinkeAdmin.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,15 +159,21 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0BDB4DE72A292E7E00B0AEE1 /* Build configuration list for PBXNativeTarget "LinkeAdmin" */;
 			buildPhases = (
+				EB840237E95C1C59E2498335 /* [CP] Check Pods Manifest.lock */,
 				0BDB4DD52A292E7D00B0AEE1 /* Sources */,
 				0BDB4DD62A292E7D00B0AEE1 /* Frameworks */,
 				0BDB4DD72A292E7D00B0AEE1 /* Resources */,
+				DCEE0AC7F1AB506B7E396F97 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = LinkeAdmin;
+			packageProductDependencies = (
+				0BDB4DEB2A292EEE00B0AEE1 /* FirebaseFirestore */,
+				0BDB4DED2A292EEE00B0AEE1 /* FirebaseFirestoreSwift */,
+			);
 			productName = LinkeAdmin;
 			productReference = 0BDB4DD92A292E7D00B0AEE1 /* LinkeAdmin.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +202,9 @@
 				Base,
 			);
 			mainGroup = 0BDB4DD02A292E7D00B0AEE1;
+			packageReferences = (
+				0BDB4DEA2A292EEE00B0AEE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 0BDB4DDA2A292E7D00B0AEE1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -127,18 +221,73 @@
 			files = (
 				0BDB4DE42A292E7E00B0AEE1 /* Preview Assets.xcassets in Resources */,
 				0BDB4DE12A292E7E00B0AEE1 /* Assets.xcassets in Resources */,
+				0BDB4E042A29371200B0AEE1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DCEE0AC7F1AB506B7E396F97 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LinkeAdmin/Pods-LinkeAdmin-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LinkeAdmin/Pods-LinkeAdmin-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LinkeAdmin/Pods-LinkeAdmin-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EB840237E95C1C59E2498335 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LinkeAdmin-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0BDB4DD52A292E7D00B0AEE1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BDB4DF02A292F1800B0AEE1 /* ViewRouter.swift in Sources */,
+				0BDB4E062A295A8C00B0AEE1 /* StudentView.swift in Sources */,
+				0BEFD78E2A2D6C39004A892F /* ClassroomView.swift in Sources */,
+				0BDB4DF32A292F4800B0AEE1 /* GoogleSignInView.swift in Sources */,
+				0BDB4DFA2A29353600B0AEE1 /* Team.swift in Sources */,
+				0BDB4E012A2935FE00B0AEE1 /* Admin.swift in Sources */,
+				0BEFD78A2A2AC12E004A892F /* Classroom.swift in Sources */,
 				0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */,
+				0BDB4DF72A292F9900B0AEE1 /* HomeView.swift in Sources */,
+				0BDB4DFF2A2935D600B0AEE1 /* User.swift in Sources */,
+				0BDB4DF52A292F7400B0AEE1 /* LoadingView.swift in Sources */,
+				0BEFD78C2A2AC17B004A892F /* Assignment.swift in Sources */,
 				0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */,
+				0BDB4DFC2A29354200B0AEE1 /* Student.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +410,7 @@
 		};
 		0BDB4DE82A292E7E00B0AEE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D574251EF883FC1C1EEACA6B /* Pods-LinkeAdmin.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -270,6 +420,8 @@
 				DEVELOPMENT_TEAM = 9RC5A2595F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LinkeAdmin/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Linke Admin";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -290,6 +442,7 @@
 		};
 		0BDB4DE92A292E7E00B0AEE1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A823685D043CD2E50AC922D8 /* Pods-LinkeAdmin.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -299,6 +452,8 @@
 				DEVELOPMENT_TEAM = 9RC5A2595F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LinkeAdmin/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Linke Admin";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -339,6 +494,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0BDB4DEA2A292EEE00B0AEE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0BDB4DEB2A292EEE00B0AEE1 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BDB4DEA2A292EEE00B0AEE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		0BDB4DED2A292EEE00B0AEE1 /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BDB4DEA2A292EEE00B0AEE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0BDB4DD12A292E7D00B0AEE1 /* Project object */;
 }
