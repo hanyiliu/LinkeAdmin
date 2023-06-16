@@ -13,7 +13,8 @@ class Team: ObservableObject {
     @Published var refresh: Bool = true //Call to refresh any views using this object
     @Published var teamCode = ""
     @Published var students: [Student] = []
-    var admins: [Admin] = []
+    @Published var studentGroups: [Group] = []
+    @Published var admins: [Admin] = []
     var teamID: String = ""
     
     static let db = Firestore.firestore()
@@ -63,6 +64,9 @@ class Team: ObservableObject {
 
         admins = try await Team.initAdmins(adminIDs: teamDictionary["admins"] as! [String])
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
+        
+        studentGroups = initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
+        
         DispatchQueue.main.async {
             self.teamCode = teamDictionary["team_code"] as! String
         }
@@ -193,6 +197,8 @@ class Team: ObservableObject {
         }
         teamData["admins"] = adminArray
         
+        teamData["groups"] = []
+        
 
         
         return teamData
@@ -203,7 +209,6 @@ class Team: ObservableObject {
         print("Trying to upload data to Firestore")
         let document = Team.db.collection("team_data").document("\(teamID)")
         document.setData(data)
-
     }
     
     ///Add admin's iD to the team document's admins array.
@@ -236,6 +241,11 @@ class Team: ObservableObject {
                 print("ID removed from admins array successfully")
             }
         }
+    }
+    
+    ///Create new empty group
+    func createGroup(name: String) {
+        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)"))
     }
     
     ///Fetch team data from Firebase. Returns team dictionary.
@@ -294,5 +304,39 @@ class Team: ObservableObject {
             }
         }
         return admins
+    }
+    
+    ///Initializes groups, given all groups data.
+    func initGroups(groups: [[String: Any]]) -> [Group] {
+        var studentGroups: [Group] = []
+        
+        for groupData in groups {
+            guard
+                let name = groupData["name"] as? String,
+                let id = groupData["id"] as? String,
+                let studentIDs = groupData["students"] as? [String],
+                let adminIDs = groupData["admins"] as? [String]
+            else {
+                continue
+            }
+            
+            let group = Group(team: self, name: name, id: id)
+            
+            // Initialize students
+            group.students = studentIDs.compactMap { studentID in
+                // Find the student with the matching ID in the Team's students array
+                return students.first { $0.id == studentID }
+            }
+            
+            // Initialize admins
+            group.admins = adminIDs.compactMap { adminID in
+                // Find the admin with the matching ID in the Team's admins array
+                return admins.first { $0.id == adminID }
+            }
+            
+            studentGroups.append(group)
+        }
+        
+        return studentGroups
     }
 }

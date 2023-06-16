@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B2F47AA2A3BA6400037002F /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47A92A3BA6400037002F /* Group.swift */; };
+		0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47AB2A3CDF070037002F /* GroupView.swift */; };
 		0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */; };
 		0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */; };
 		0BDB4DE12A292E7E00B0AEE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BDB4DE02A292E7E00B0AEE1 /* Assets.xcassets */; };
@@ -30,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B2F47A92A3BA6400037002F /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		0B2F47AB2A3CDF070037002F /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		0BDB4DD92A292E7D00B0AEE1 /* LinkeAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkeAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkeAdminApp.swift; sourceTree = "<group>"; };
 		0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -118,6 +122,7 @@
 				0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */,
 				0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */,
 				0BDB4DF62A292F9900B0AEE1 /* HomeView.swift */,
+				0B2F47AB2A3CDF070037002F /* GroupView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -126,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				0BDB4DF92A29353600B0AEE1 /* Team.swift */,
+				0B2F47A92A3BA6400037002F /* Group.swift */,
 				0BDB4DFE2A2935D600B0AEE1 /* User.swift */,
 				0BDB4DFB2A29354200B0AEE1 /* Student.swift */,
 				0BDB4E002A2935FE00B0AEE1 /* Admin.swift */,
@@ -276,7 +282,9 @@
 			files = (
 				0BDB4DF02A292F1800B0AEE1 /* ViewRouter.swift in Sources */,
 				0BDB4E062A295A8C00B0AEE1 /* StudentView.swift in Sources */,
+				0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */,
 				0BEFD78E2A2D6C39004A892F /* ClassroomView.swift in Sources */,
+				0B2F47AA2A3BA6400037002F /* Group.swift in Sources */,
 				0BDB4DF32A292F4800B0AEE1 /* GoogleSignInView.swift in Sources */,
 				0BDB4DFA2A29353600B0AEE1 /* Team.swift in Sources */,
 				0BDB4E012A2935FE00B0AEE1 /* Admin.swift in Sources */,

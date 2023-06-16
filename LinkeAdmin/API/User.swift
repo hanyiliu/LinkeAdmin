@@ -7,7 +7,7 @@
 
 import Foundation
 
-class User: ObservableObject, Identifiable {
+class User: ObservableObject, Identifiable, Hashable {
     var name: String
     var id: String
     var email: String
@@ -16,5 +16,13 @@ class User: ObservableObject, Identifiable {
         self.name = name
         self.id = id
         self.email = email
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
     }
 }

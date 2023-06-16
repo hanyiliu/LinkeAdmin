@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import GoogleSignIn
+import FirebaseFirestore
 
 struct HomeView: View {
     
@@ -18,8 +19,15 @@ struct HomeView: View {
     
     @State private var showSignOutConfirmation = false
     @State private var showConfirmation = false //For deleting team
-    @State private var showAlert = false //For entering tema code to join
+    
+    @State private var showAlert = false //For entering team code to join
     @State private var enteredCode = "" //---
+    
+    @State private var showCreateGroupAlert = false //For entering new group name
+    @State private var enteredGroupName = "" //---
+    
+    @State private var fakeStudentCount = 0
+    @State private var fakeAdminCount = 0
     
     var body: some View {
         let user = GIDSignIn.sharedInstance.currentUser
@@ -114,6 +122,28 @@ struct HomeView: View {
                         }
                     
                     } else {
+                        Section(header: Text("Team Groups")) {
+                            ForEach(team.studentGroups) { group in
+                                NavigationLink(destination: GroupView(group: group)) {
+                                    Text(group.name)
+                                }
+                            }
+                            Button("Create New Group") {
+                                showCreateGroupAlert = true
+                            }
+                            .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
+                                TextField("Enter Group Name", text: $enteredGroupName)
+                                HStack {
+                                    Button("Cancel") {
+                                        showCreateGroupAlert = false
+                                    }
+                                    Button("Create") {
+                                        team.createGroup(name: enteredGroupName)
+                                        team.refresh.toggle()
+                                    }
+                                }
+                            }
+                        }
                         Section(header: Text("Your Team")) {
                             if(team.students.count == 0) {
                                 HStack {
@@ -200,6 +230,68 @@ struct HomeView: View {
                                 }),
                                 secondaryButton: .cancel()
                             )
+                        }
+                    }
+                    
+                    Section(header: Text("REMOVE AT RELEASE")) {
+                        Button("Add fake student to team") {
+                            //Create fake dictionary
+                            let studentID = "0000\(fakeStudentCount)"
+                            var studentDictionary: [String: Any] = [:]
+                            studentDictionary["name"] = "John Doe \(fakeStudentCount)"
+                            studentDictionary["id"] = studentID
+                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
+                            studentDictionary["last_updated"] = Date()
+                            
+                            var classroomArray: [[String: Any]] = []
+                            let classroom = ["name": "Math", "id": "12345"]
+                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 6, "day": 15]] as [String : Any]
+                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 6, "day": 20]] as [String : Any]
+                            classroomArray.append(["classroom": classroom, "assignment": [assignment1, assignment2]])
+                            
+                            studentDictionary["classroom"] = classroomArray
+                            //End fake dictionary creation
+                            
+                            fakeStudentCount += 1
+                            
+                            print("Trying to upload data to Firestore")
+                            let studentDocument = Team.db.collection("student_data").document(studentID)
+                            studentDocument.setData(studentDictionary)
+                            
+                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
+                                if let error = error {
+                                    print("Error appending ID to students array: \(error)")
+                                } else {
+                                    print("ID appended to students array successfully")
+                                }
+                            }
+                        }
+                        
+                        Button("Add fake admin to team") {
+                            //Create fake dictionary
+                            let adminID = "9999\(fakeAdminCount)"
+                            var adminDictionary: [String: Any] = [:]
+                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
+                            adminDictionary["id"] = adminID
+                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
+
+                            //End fake dictionary creation
+                            
+                            fakeAdminCount += 1
+                            
+                            print("Trying to upload data to Firestore")
+                            let adminDocument = Team.db.collection("admin_data").document(adminID)
+                            adminDocument.setData(adminDictionary)
+                            
+                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
+                                if let error = error {
+                                    print("Error appending ID to admins array: \(error)")
+                                } else {
+                                    print("ID appended to admins array successfully")
+                                }
+                            }
                         }
                     }
                     Logo()

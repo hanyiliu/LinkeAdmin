@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 
 class Student: User {
+    
     var classrooms: [Classroom]
     var lastUpdated: Date
     
@@ -57,7 +58,6 @@ class Student: User {
                 }
                 
                 let statusID = assignmentDict["status"] as? Int ?? 0
-                print(statusID)
                 var status: AssignmentStatus = .inProgress
                 
                 if(statusID == 1) {
@@ -83,4 +83,5 @@ class Student: User {
         dateFormatter.dateFormat = "MM/d hh:mm a"
         return dateFormatter.string(from: lastUpdated)
     }
+
 }
