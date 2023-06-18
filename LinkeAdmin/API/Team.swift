@@ -19,14 +19,14 @@ class Team: ObservableObject {
     
     static let db = Firestore.firestore()
     
-    init() {
+    init(currentAdmin: Admin) {
         //Check if user has a team ID stored in local.
         if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String {
             teamID = id
             Task {
                 do {
                     if let teamDictionary = try await Team.fetchData(teamID: teamID) {
-                        try await initializeTeam(teamDictionary: teamDictionary)
+                        try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
                     }
                 } catch {
                     print("Error while trying to fetch team data: \(error)")
@@ -47,7 +47,7 @@ class Team: ObservableObject {
                     }
                     
                     let teamDictionary = document.data()
-                    try await initializeTeam(teamDictionary: teamDictionary)
+                    try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
                     
                 } catch {
                     print("Error getting document: \(error)")
@@ -58,12 +58,16 @@ class Team: ObservableObject {
 
     }
     ///Initializes variables, given the dictionary.
-    func initializeTeam(teamDictionary: [String: Any]) async throws {
+    func initializeTeam(teamDictionary: [String: Any], currentAdmin: Admin? = nil) async throws {
 
         self.students = try await Team.initStudents(studentIDs: teamDictionary["students"] as! [String])
 
         admins = try await Team.initAdmins(adminIDs: teamDictionary["admins"] as! [String])
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
+      
+        if currentAdmin != nil {
+            currentAdmin!.founder = true
+        }
         
         studentGroups = initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
         
@@ -244,9 +248,46 @@ class Team: ObservableObject {
     }
     
     ///Create new empty group
-    func createGroup(name: String) {
-        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)"))
+    func createGroup(name: String, founderID: String) {
+        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)", founder: admins.first(where: { $0.id == founderID } )!))
     }
+    
+    ///Delete group
+    func deleteGroup(at offsets: IndexSet) {
+        // Remove the groups from the studentGroups array
+        studentGroups.remove(atOffsets: offsets)
+        
+        // Delete the corresponding groups from Firebase
+        let teamsCollection = Team.db.collection("team_data")
+        let teamDocument = teamsCollection.document(teamID)
+        Task {
+            do {
+                var groupsArray: [[String: Any]] = []
+                
+                let snapshot = try await teamDocument.getDocument()
+                if snapshot.exists {
+                    // Team document exists
+                    if let existingGroups = snapshot.data()?["groups"] as? [[String: Any]] {
+                        // Remove the groups from the existing groups array
+                        groupsArray = existingGroups
+                        groupsArray.remove(atOffsets: offsets)
+                    }
+                    
+                    // Update the groups array in the team document
+                    try await teamDocument.setData([
+                        "groups": groupsArray
+                    ], merge: true)
+                    
+                    print("Group deleted successfully")
+                } else {
+                    print("Team document doesn't exist")
+                }
+            } catch {
+                print("Error deleting group: \(error)")
+            }
+        }
+    }
+
     
     ///Fetch team data from Firebase. Returns team dictionary.
     static func fetchData(teamID: String) async throws -> [String: Any]? {

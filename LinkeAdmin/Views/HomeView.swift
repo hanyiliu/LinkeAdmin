@@ -122,28 +122,40 @@ struct HomeView: View {
                         }
                     
                     } else {
-                        Section(header: Text("Team Groups")) {
-                            ForEach(team.studentGroups) { group in
-                                NavigationLink(destination: GroupView(group: group)) {
-                                    Text(group.name)
+                        if(admin.founder) {
+                            Section(header: Text("Team Groups")) {
+                                ForEach(team.studentGroups) { group in
+                                    NavigationLink(destination: GroupView(group: group)) {
+                                        Text(group.name)
+                                    }
+                                }
+                                .onDelete(perform: team.deleteGroup)
+                                Button("Create New Group") {
+                                    showCreateGroupAlert = true
+                                }
+                                .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
+                                    TextField("Enter Group Name", text: $enteredGroupName)
+                                    HStack {
+                                        Button("Cancel") {
+                                            showCreateGroupAlert = false
+                                        }
+                                        Button("Create") {
+                                            team.createGroup(name: enteredGroupName, founderID: admin.id)
+                                            team.refresh.toggle()
+                                        }
+                                    }
                                 }
                             }
-                            Button("Create New Group") {
-                                showCreateGroupAlert = true
-                            }
-                            .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
-                                TextField("Enter Group Name", text: $enteredGroupName)
-                                HStack {
-                                    Button("Cancel") {
-                                        showCreateGroupAlert = false
-                                    }
-                                    Button("Create") {
-                                        team.createGroup(name: enteredGroupName)
-                                        team.refresh.toggle()
+                        } else {
+                            Section(header: Text("Team Groups")) {
+                                ForEach(team.studentGroups.filter { $0.admins.contains(where: { $0.id == admin.id }) }) { group in
+                                    NavigationLink(destination: GroupView(group: group)) {
+                                        Text(group.name)
                                     }
                                 }
                             }
                         }
+                        
                         Section(header: Text("Your Team")) {
                             if(team.students.count == 0) {
                                 HStack {

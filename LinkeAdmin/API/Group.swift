@@ -14,13 +14,24 @@ class Group: ObservableObject, Identifiable {
     @Published var students: [Student]
     @Published var admins: [Admin]
 
-    
     init(team: Team, name: String, id: String) {
         self.team = team
         self.name = name
         self.id = id
         self.students = []
         self.admins = []
+        
+        Task {
+            await uploadData()
+        }
+    }
+    
+    init(team: Team, name: String, id: String, founder: Admin) {
+        self.team = team
+        self.name = name
+        self.id = id
+        self.students = []
+        self.admins = [founder]
         
         Task {
             await uploadData()
@@ -46,6 +57,20 @@ class Group: ObservableObject, Identifiable {
         }
         admins.append(admin)
         
+        Task {
+            await uploadData()
+        }
+    }
+    
+    func deleteStudent(at indexSet: IndexSet) {
+        students.remove(atOffsets: indexSet)
+        Task {
+            await uploadData()
+        }
+    }
+    
+    func deleteAdmin(at indexSet: IndexSet) {
+        admins.remove(atOffsets: indexSet)
         Task {
             await uploadData()
         }

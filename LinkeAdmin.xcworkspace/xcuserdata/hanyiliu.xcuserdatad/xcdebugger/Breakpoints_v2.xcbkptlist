@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "25"
             endingLineNumber = "25"
-            landmarkName = "init()"
+            landmarkName = "init(currentAdmin:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,8 +30,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
+            startingLineNumber = "323"
+            endingLineNumber = "323"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "278"
-            endingLineNumber = "278"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
             <Locations>
@@ -94,8 +94,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "276"
-            endingLineNumber = "276"
+            startingLineNumber = "317"
+            endingLineNumber = "317"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -110,8 +110,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "280"
-            endingLineNumber = "280"
+            startingLineNumber = "321"
+            endingLineNumber = "321"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
             <Locations>
@@ -188,8 +188,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -204,8 +204,8 @@
             filePath = "LinkeAdmin/API/Team.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
+            startingLineNumber = "316"
+            endingLineNumber = "316"
             landmarkName = "initStudents(studentIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -576,6 +576,54 @@
             endingLineNumber = "58"
             landmarkName = "init(studentDictionary:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "09CE364E-ED80-45F2-B628-1B46FEEC85EE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LinkeAdmin/API/Team.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "initializeTeam(teamDictionary:currentAdmin:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "09CE364E-ED80-45F2-B628-1B46FEEC85EE - 2dc547d740df99e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for LinkeAdmin.Team.initializeTeam(teamDictionary: Swift.Dictionary&lt;Swift.String, Any&gt;, currentAdmin: Swift.Optional&lt;LinkeAdmin.Admin&gt;) async throws -&gt; ()"
+                  moduleName = "LinkeAdmin"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hanyiliu/Documents/GitHub/LinkeAdmin/LinkeAdmin/API/Team.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "292">
+               </Location>
+               <Location
+                  uuid = "09CE364E-ED80-45F2-B628-1B46FEEC85EE - d6a59da448a99967"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (LinkeAdmin.Admin) -&gt; Swift.Bool in LinkeAdmin.Team.initializeTeam(teamDictionary: Swift.Dictionary&lt;Swift.String, Any&gt;, currentAdmin: Swift.Optional&lt;LinkeAdmin.Admin&gt;) async throws -&gt; ()"
+                  moduleName = "LinkeAdmin"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hanyiliu/Documents/GitHub/LinkeAdmin/LinkeAdmin/API/Team.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "104">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

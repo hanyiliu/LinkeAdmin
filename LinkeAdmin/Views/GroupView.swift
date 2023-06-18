@@ -24,7 +24,7 @@ struct GroupView: View {
                         Text(student.name)
                     }
                 }
-                .onDelete(perform: deleteStudent)
+                .onDelete(perform: group.deleteStudent)
                 Button("Add Students") {
                     isShowingAddStudentsSheet = true
                 }
@@ -34,7 +34,7 @@ struct GroupView: View {
                 ForEach(group.admins) { admin in
                     Text(admin.name)
                 }
-                .onDelete(perform: deleteAdmin)
+                .onDelete(perform: group.deleteAdmin)
                 Button("Add Admins") {
                     isShowingAddAdminsSheet = true
                 }
@@ -47,20 +47,6 @@ struct GroupView: View {
             AddAdminsSheet(group: group, selectedAdmins: $selectedAdmins)
         }
         .navigationTitle(group.name)
-    }
-    
-    private func deleteStudent(at indexSet: IndexSet) {
-        group.students.remove(atOffsets: indexSet)
-        Task {
-            await group.uploadData()
-        }
-    }
-    
-    private func deleteAdmin(at indexSet: IndexSet) {
-        group.admins.remove(atOffsets: indexSet)
-        Task {
-            await group.uploadData()
-        }
     }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 
 class Admin: User {
-    var founder: Bool = false
+    @Published var founder: Bool = false
     
     init(name: String, id: String, email: String, founder: Bool = false) {
         self.founder = founder

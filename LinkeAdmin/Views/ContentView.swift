@@ -19,11 +19,10 @@ struct ContentView: View {
         case .googleSignIn:
             GoogleSignInView(viewRouter: viewRouter)
         case .home:
-            
-            let team = Team()
             let admin = Admin(name: GIDSignIn.sharedInstance.currentUser?.profile?.name ?? "",
                              id: GIDSignIn.sharedInstance.currentUser?.userID ?? "",
                              email: GIDSignIn.sharedInstance.currentUser?.profile?.email ?? "")
+            let team = Team(currentAdmin: admin)
             HomeView(viewRouter: viewRouter, team: team, admin: admin)
                 
         }
