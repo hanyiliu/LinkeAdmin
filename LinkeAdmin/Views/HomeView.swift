@@ -122,37 +122,58 @@ struct HomeView: View {
                         }
                     
                     } else {
-                        if(admin.founder) {
-                            Section(header: Text("Team Groups")) {
-                                ForEach(team.studentGroups) { group in
-                                    NavigationLink(destination: GroupView(group: group)) {
-                                        Text(group.name)
+                        if(team.students.count != 0) {
+                            if(admin.founder) {
+                                Section(header: Text("Team Groups")) {
+                                    ForEach(team.studentGroups) { group in
+                                        NavigationLink(destination: GroupView(group: group)) {
+                                            Text(group.name)
+                                        }
+                                    }
+                                    .onDelete(perform: team.deleteGroup)
+                                    Button("Create New Group") {
+                                        showCreateGroupAlert = true
+                                    }
+                                    .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
+                                        TextField("Enter Group Name", text: $enteredGroupName)
+                                        HStack {
+                                            Button("Cancel") {
+                                                showCreateGroupAlert = false
+                                            }
+                                            Button("Create") {
+                                                team.createGroup(name: enteredGroupName, founderID: admin.id)
+                                                team.refresh.toggle()
+                                            }
+                                        }
                                     }
                                 }
-                                .onDelete(perform: team.deleteGroup)
-                                Button("Create New Group") {
-                                    showCreateGroupAlert = true
-                                }
-                                .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
-                                    TextField("Enter Group Name", text: $enteredGroupName)
-                                    HStack {
-                                        Button("Cancel") {
-                                            showCreateGroupAlert = false
-                                        }
-                                        Button("Create") {
-                                            team.createGroup(name: enteredGroupName, founderID: admin.id)
-                                            team.refresh.toggle()
+                            } else {
+                                Section(header: Text("Team Groups")) {
+                                    ForEach(team.studentGroups.filter { $0.admins.contains(where: { $0.id == admin.id }) }) { group in
+                                        NavigationLink(destination: GroupView(group: group)) {
+                                            Text(group.name)
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            Section(header: Text("Team Groups")) {
-                                ForEach(team.studentGroups.filter { $0.admins.contains(where: { $0.id == admin.id }) }) { group in
-                                    NavigationLink(destination: GroupView(group: group)) {
-                                        Text(group.name)
-                                    }
+                            
+                            Section() {
+                                NavigationLink(destination: TeachersView(team: team, teachersByStudentCount: team.getTeachersByStudentCount())) {
+                                    Text("View Students by Teachers")
                                 }
+                            }
+                        }
+                        
+                        Section(header: Text("Team Info")) {
+                            HStack {
+                                Text("Team Code")
+                                Spacer()
+                                Text(team.teamCode).foregroundColor(Color.gray)
+                            }
+                            HStack {
+                                Text("Founder")
+                                Spacer()
+                                Text(team.admins.first(where: { $0.founder })?.name ?? "No Founder").foregroundColor(Color.gray)
                             }
                         }
                         
@@ -169,19 +190,6 @@ struct HomeView: View {
                                         Text(student.name)
                                     }
                                 }
-                            }
-                        }
-                        
-                        Section(header: Text("Team Info")) {
-                            HStack {
-                                Text("Team Code")
-                                Spacer()
-                                Text(team.teamCode).foregroundColor(Color.gray)
-                            }
-                            HStack {
-                                Text("Founder")
-                                Spacer()
-                                Text(team.admins.first(where: { $0.founder })?.name ?? "No Founder").foregroundColor(Color.gray)
                             }
                         }
                         
@@ -254,12 +262,14 @@ struct HomeView: View {
                             studentDictionary["id"] = studentID
                             studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
                             studentDictionary["last_updated"] = Date()
-                            
+                            let classroomCount = fakeStudentCount / 3
+                            let randomInt = Int.random(in: 0...2)
                             var classroomArray: [[String: Any]] = []
-                            let classroom = ["name": "Math", "id": "12345"]
+                            var classroom: [String: Any] = ["name": "Math \(fakeStudentCount / 5 + randomInt)", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Bobby Joe 0"]
                             let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 6, "day": 15]] as [String : Any]
                             let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 6, "day": 20]] as [String : Any]
-                            classroomArray.append(["classroom": classroom, "assignment": [assignment1, assignment2]])
+                            classroom["assignment"] = [assignment1, assignment2]
+                            classroomArray.append(classroom)
                             
                             studentDictionary["classroom"] = classroomArray
                             //End fake dictionary creation

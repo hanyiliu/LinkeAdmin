@@ -13,6 +13,13 @@ struct ClassroomView: View {
     
     var body: some View {
         List {
+            Section() {
+                HStack{
+                    Text("Teacher")
+                    Spacer()
+                    Text(classroom.teacherName).foregroundColor(Color.gray)
+                }
+            }
             Section(header: Text("Upcoming Assignments")) {
                 ForEach(classroom.upcomingAssignments) { assign in
                     HStack {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B1BCA462A421B4000D2A068 /* TeachersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1BCA452A421B4000D2A068 /* TeachersView.swift */; };
 		0B2F47AA2A3BA6400037002F /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47A92A3BA6400037002F /* Group.swift */; };
 		0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47AB2A3CDF070037002F /* GroupView.swift */; };
 		0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B1BCA452A421B4000D2A068 /* TeachersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeachersView.swift; sourceTree = "<group>"; };
 		0B2F47A92A3BA6400037002F /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		0B2F47AB2A3CDF070037002F /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		0BDB4DD92A292E7D00B0AEE1 /* LinkeAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkeAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				0BDB4DF22A292F4800B0AEE1 /* GoogleSignInView.swift */,
+				0B1BCA452A421B4000D2A068 /* TeachersView.swift */,
 				0BDB4E052A295A8C00B0AEE1 /* StudentView.swift */,
 				0BEFD78D2A2D6C39004A892F /* ClassroomView.swift */,
 				0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */,
@@ -280,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B1BCA462A421B4000D2A068 /* TeachersView.swift in Sources */,
 				0BDB4DF02A292F1800B0AEE1 /* ViewRouter.swift in Sources */,
 				0BDB4E062A295A8C00B0AEE1 /* StudentView.swift in Sources */,
 				0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */,

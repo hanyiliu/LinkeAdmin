@@ -287,6 +287,36 @@ class Team: ObservableObject {
             }
         }
     }
+    
+    ///Return all teacher's names with their corresponding # of students.
+    func getTeachersByStudentCount() -> [(String, Int, [(Student, String)])] {
+        print("called")
+        var teachersWithStudents: [(String, Int, [(Student, String)])] = []
+        
+        // Create a dictionary to store teachers and their associated students
+        var teacherStudentsDict: [String: [(Student, String)]] = [:]
+        
+        // Iterate over all students
+        for student in students {
+            // Iterate over each student's classrooms
+            for classroom in student.classrooms {
+                // Append the student to the teacher's array in the dictionary
+                teacherStudentsDict[classroom.teacherName, default: []].append((student, classroom.name))
+            }
+        }
+        
+        // Sort teachers by student count in descending order
+        let sortedTeachers = teacherStudentsDict.sorted { $0.value.count > $1.value.count }
+        
+        // Create the result array with teacher name, student count, and associated students
+        for (teacherName, students) in sortedTeachers {
+            let sortedStudents = students.sorted { $0.1 < $1.1 } // Sort by the associated string
+            let studentCount = students.count
+            teachersWithStudents.append((teacherName, studentCount, sortedStudents))
+        }
+        
+        return teachersWithStudents
+    }
 
     
     ///Fetch team data from Firebase. Returns team dictionary.

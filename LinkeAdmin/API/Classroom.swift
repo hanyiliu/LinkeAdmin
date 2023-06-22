@@ -12,10 +12,15 @@ class Classroom: Identifiable, ObservableObject {
     var id: String
     var assignments: [Assignment]
     
-    init(name: String, id: String, assignments: [Assignment]) {
+    var teacherID: String
+    var teacherName: String
+    
+    init(name: String, id: String, assignments: [Assignment], teacherID: String, teacherName: String) {
         self.name = name
         self.id = id
         self.assignments = assignments
+        self.teacherID = teacherID
+        self.teacherName = teacherName
     }
     
     ///Return Upcoming assignments (due within 7 days).

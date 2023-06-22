@@ -29,6 +29,8 @@ class Student: User {
         let classrooms = classroomArray.map { classroomDict -> Classroom in
             let classroomID = classroomDict["id"] as? String ?? ""
             let classroomName = classroomDict["name"] as? String ?? ""
+            let classroomTeacherID = classroomDict["teacher_id"] as? String ?? ""
+            let classroomTeacherName = classroomDict["teacher_name"] as? String ?? ""
             
             let assignmentArray = classroomDict["assignment"] as? [[String: Any]] ?? []
             let assignments = assignmentArray.map { assignmentDict -> Assignment in
@@ -69,7 +71,7 @@ class Student: User {
                 return Assignment(name: assignmentName, id: assignmentID, dueDate: dueDate, status: status)
             }
             
-            return Classroom(name: classroomName, id: classroomID, assignments: assignments)
+            return Classroom(name: classroomName, id: classroomID, assignments: assignments, teacherID: classroomTeacherID, teacherName: classroomTeacherName)
         }
         
         self.lastUpdated = (studentDictionary["last_updated"] as! Timestamp).dateValue()
