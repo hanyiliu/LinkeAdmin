@@ -60,7 +60,7 @@ struct GoogleSignInView: View {
             user, error in
             
             if(error == nil) {
-                viewRouter.currentPage = .home
+                viewRouter.currentPage = .loadingSignedIn
             }
         }
     }

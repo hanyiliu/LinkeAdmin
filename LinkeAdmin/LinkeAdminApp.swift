@@ -36,7 +36,7 @@ struct LinkeAdminApp: App {
                             // Show the app's signed-in state.
                             
                             print("User previously logged in")
-                            viewRouter.currentPage = .home
+                            viewRouter.currentPage = .loadingSignedIn
                         }
                     }
 

@@ -17,25 +17,37 @@ class Team: ObservableObject {
     @Published var admins: [Admin] = []
     var teamID: String = ""
     
+    static var started = false
     static let db = Firestore.firestore()
     
-    init(currentAdmin: Admin) {
+    init(currentAdmin: Admin, viewRouter: ViewRouter) {
+        viewRouter.currentPage = .loading
+        Team.started = true
+        print("Starting to load team.")
         //Check if user has a team ID stored in local.
         if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String {
             teamID = id
             Task {
                 do {
                     if let teamDictionary = try await Team.fetchData(teamID: teamID) {
+                        print("Team ID stored at local. Using it to initialize team.")
                         try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
+                    } else {
+                        print("Data not found using Team ID.")
                     }
                 } catch {
                     print("Error while trying to fetch team data: \(error)")
                 }
+                print("Finished loading team.")
+                viewRouter.currentPage = .home
             }
         }
         //Then check if user's ID is logged in a team's database.
         else {
-            guard let adminID = GIDSignIn.sharedInstance.currentUser?.userID else { return }
+            guard let adminID = GIDSignIn.sharedInstance.currentUser?.userID else {
+                viewRouter.currentPage = .home
+                return
+            }
             let teamDataRef = Firestore.firestore().collection("team_data")
             let query = teamDataRef.whereField("admins", arrayContains: adminID)
             Task {
@@ -43,18 +55,23 @@ class Team: ObservableObject {
                     let snapshot = try await query.getDocuments()
                     guard let document = snapshot.documents.first else {
                         print("Document not found")
+                        viewRouter.currentPage = .home
                         return
                     }
                     
                     let teamDictionary = document.data()
+                    print("Admin found to be part of team online. Using it to initialize team.")
                     try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
                     
                 } catch {
                     print("Error getting document: \(error)")
                 }
+                print("Finished loading team.")
+                viewRouter.currentPage = .home
             }
         }
         //If neither, current team is initialized as empty.
+        
 
     }
     ///Initializes variables, given the dictionary.
