@@ -15,7 +15,7 @@ struct GoogleSignInView: View {
     @StateObject var viewRouter: ViewRouter
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
-    let clientID = "102247840613-h0icqnch0ugvb4efp7vjob0d5ljkg90s.apps.googleusercontent.com"
+    let clientID = Bundle.main.object(forInfoDictionaryKey: "CLIENT_ID") as! String
 
     var body: some View {
         
@@ -60,7 +60,7 @@ struct GoogleSignInView: View {
             user, error in
             
             if(error == nil) {
-                viewRouter.currentPage = .loading
+                viewRouter.currentPage = .home
             }
         }
     }
