@@ -19,7 +19,7 @@ class Student: User {
         super.init(name: name, id: id, email: email)
     }
     
-    init(studentDictionary: [String:Any]) {
+    init(studentDictionary: [String: Any]) {
         let name = studentDictionary["name"] as? String ?? ""
         let id = studentDictionary["id"] as? String ?? ""
         let email = studentDictionary["email"] as? String ?? ""
@@ -27,51 +27,7 @@ class Student: User {
         
         let classroomArray = studentDictionary["classroom"] as? [[String: Any]] ?? []
         let classrooms = classroomArray.map { classroomDict -> Classroom in
-            let classroomID = classroomDict["id"] as? String ?? ""
-            let classroomName = classroomDict["name"] as? String ?? ""
-            let classroomTeacherID = classroomDict["teacher_id"] as? String ?? ""
-            let classroomTeacherName = classroomDict["teacher_name"] as? String ?? ""
-            
-            let assignmentArray = classroomDict["assignment"] as? [[String: Any]] ?? []
-            let assignments = assignmentArray.map { assignmentDict -> Assignment in
-                let assignmentID = assignmentDict["id"] as? String ?? ""
-                let assignmentName = assignmentDict["name"] as? String ?? ""
-                
-                var dueDate: Date? = nil
-                if let dueDateDict = assignmentDict["due_date"] as? [String: Int],
-                   let day = dueDateDict["day"],
-                   let month = dueDateDict["month"],
-                   let year = dueDateDict["year"]
-                {
-                    let calendar = Calendar.current
-                    var dateComponents = DateComponents()
-                    dateComponents.day = day
-                    dateComponents.month = month
-                    dateComponents.year = year
-                    dueDate = calendar.date(from: dateComponents)
-                    if let dueTimeDict = assignmentDict["due_time"] as? [String: Int],
-                       let hour = dueTimeDict["hour"],
-                       let minute = dueTimeDict["minute"]
-                    {
-                        dateComponents.hour = hour
-                        dateComponents.minute = minute
-                        dueDate = calendar.date(from: dateComponents)
-                    }
-                }
-                
-                let statusID = assignmentDict["status"] as? Int ?? 0
-                var status: AssignmentStatus = .inProgress
-                
-                if(statusID == 1) {
-                    status = .completedClassroom
-                } else if(statusID == 2) {
-                    status = .completedReminders
-                }
-            
-                return Assignment(name: assignmentName, id: assignmentID, dueDate: dueDate, status: status)
-            }
-            
-            return Classroom(name: classroomName, id: classroomID, assignments: assignments, teacherID: classroomTeacherID, teacherName: classroomTeacherName)
+            return Classroom(classroomDict: classroomDict)
         }
         
         self.lastUpdated = (studentDictionary["last_updated"] as! Timestamp).dateValue()

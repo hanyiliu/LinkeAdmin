@@ -35,7 +35,7 @@ struct HomeView: View {
         if let profile = user?.profile {
             NavigationView {
                 Form {
-                    if team.teamCode == "" {
+                    if team.teamAdminCode == "" {
                         Section() {
                             VStack {
                                 Spacer()
@@ -102,14 +102,14 @@ struct HomeView: View {
                                                 .padding(.horizontal)
                                             Spacer()
                                         }
-                                    }.alert("Enter Team Code", isPresented: $showAlert) {
-                                        TextField("Enter Team Code", text: $enteredCode)
+                                    }.alert("Enter Team Admin Code", isPresented: $showAlert) {
+                                        TextField("TUVWXYZ", text: $enteredCode)
                                         HStack {
                                             Button("Cancel") {
                                                 showAlert = false
                                             }
                                             Button("Join") {
-                                                team.joinTeam(teamCode: enteredCode)
+                                                team.joinTeam(teamCode: enteredCode.uppercased())
                                                 team.refresh.toggle()
                                             }
                                         }
@@ -158,7 +158,7 @@ struct HomeView: View {
                             }
                             
                             Section() {
-                                NavigationLink(destination: TeachersView(team: team, teachersByStudentCount: team.getTeachersByStudentCount())) {
+                                NavigationLink(destination: TeachersView(team: team, teachersByStudentCount: team.teachersByStudentSorted)) {
                                     Text("View Students by Teachers")
                                 }
                             }
@@ -166,10 +166,17 @@ struct HomeView: View {
                         
                         Section(header: Text("Team Info")) {
                             HStack {
-                                Text("Team Code")
+                                Text("Team Student Code")
                                 Spacer()
-                                Text(team.teamCode).foregroundColor(Color.gray)
+                                Text(team.teamStudentCode).foregroundColor(Color.gray)
                             }
+                            
+                            HStack {
+                                Text("Team Admin Code")
+                                Spacer()
+                                Text(team.teamAdminCode).foregroundColor(Color.gray)
+                            }
+                            
                             HStack {
                                 Text("Founder")
                                 Spacer()
@@ -177,11 +184,13 @@ struct HomeView: View {
                             }
                         }
                         
-                        Section(header: Text("Your Team")) {
+                        Section(header: Text("Team Students")) {
                             if(team.students.count == 0) {
                                 HStack {
                                     Spacer()
-                                    Text("Tell your students to join with the code!").foregroundColor(Color.gray)
+                                    Text("Tell your students to join with the student code!")
+                                        .foregroundColor(Color.gray)
+                                        .multilineTextAlignment(.center)
                                     Spacer()
                                 }
                             } else {
@@ -193,7 +202,25 @@ struct HomeView: View {
                             }
                         }
                         
-                        Section() {
+                        Section(header: Text("Team Admins")) {
+                            if(team.admins.count == 1) {
+                                HStack {
+                                    Spacer()
+                                    Text("Tell your admins to join with the admin code!")
+                                        .foregroundColor(Color.gray)
+                                        .multilineTextAlignment(.center)
+                                    Spacer()
+                                }
+                            } else {
+                                ForEach(team.admins) { admin in
+                                    Text(admin.name)
+                                }
+                            }
+                        }
+
+                    }
+                    Section() {
+                        if team.teamAdminCode != "" {
                             if(admin.founder) {
                                 Button(action: {
                                     showConfirmation = true
@@ -230,8 +257,7 @@ struct HomeView: View {
                                 }
                             }
                         }
-                    }
-                    Section() {
+                        
                         Button(action: {
                             showSignOutConfirmation = true
                         }) {
@@ -276,7 +302,7 @@ struct HomeView: View {
                             
                             fakeStudentCount += 1
                             
-                            print("Trying to upload data to Firestore")
+                            print("Fake Student: Trying to upload data to Firestore")
                             let studentDocument = Team.db.collection("student_data").document(studentID)
                             studentDocument.setData(studentDictionary)
                             
@@ -302,7 +328,7 @@ struct HomeView: View {
                             
                             fakeAdminCount += 1
                             
-                            print("Trying to upload data to Firestore")
+                            print("Fake Admin: Trying to upload data to Firestore")
                             let adminDocument = Team.db.collection("admin_data").document(adminID)
                             adminDocument.setData(adminDictionary)
                             

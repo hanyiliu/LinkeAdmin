@@ -26,7 +26,7 @@ class Admin: User {
     
     ///Upload admin data to Firebase
     func uploadData(data: [String:Any]) {
-        print("Trying to upload data to Firestore")
+        print("Admin: Trying to upload data to Firestore")
         let document = Team.db.collection("admin_data").document(id)
         document.setData(data)
 

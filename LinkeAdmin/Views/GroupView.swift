@@ -50,7 +50,6 @@ struct GroupView: View {
     }
 }
 
-
 struct AddStudentsSheet: View {
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var group: Group

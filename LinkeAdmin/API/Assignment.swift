@@ -13,12 +13,41 @@ class Assignment: Identifiable {
     var dueDate: Date?
 
     var status: AssignmentStatus
-    
-    init(name: String, id: String, dueDate: Date?, status: AssignmentStatus) {
-        self.name = name
-        self.id = id
-        if let dueDate = dueDate {
-            self.dueDate = Assignment.toLocalTime(gmtDate: dueDate)
+
+    init(assignmentDict: [String: Any]) {
+        id = assignmentDict["id"] as? String ?? ""
+        name = assignmentDict["name"] as? String ?? ""
+        
+        var dueDate: Date? = nil
+        if let dueDateDict = assignmentDict["due_date"] as? [String: Int],
+           let day = dueDateDict["day"],
+           let month = dueDateDict["month"],
+           let year = dueDateDict["year"]
+        {
+            let calendar = Calendar.current
+            var dateComponents = DateComponents()
+            dateComponents.day = day
+            dateComponents.month = month
+            dateComponents.year = year
+            dueDate = calendar.date(from: dateComponents)
+            if let dueTimeDict = assignmentDict["due_time"] as? [String: Int],
+               let hour = dueTimeDict["hour"],
+               let minute = dueTimeDict["minute"]
+            {
+                dateComponents.hour = hour
+                dateComponents.minute = minute
+                dueDate = calendar.date(from: dateComponents)
+            }
+        }
+        self.dueDate = dueDate
+        
+        let statusID = assignmentDict["status"] as? Int ?? 0
+        var status: AssignmentStatus = .inProgress
+        
+        if(statusID == 1) {
+            status = .completedClassroom
+        } else if(statusID == 2) {
+            status = .completedReminders
         }
         self.status = status
     }
@@ -38,6 +67,7 @@ class Assignment: Identifiable {
         dateFormatter.dateFormat = "MM/d hh:mm a"
         return dateFormatter.string(from: dueDate)
     }
+    
 }
 
 ///Types: inProgress. completedClassroom (will override completedReminders), completedReminders

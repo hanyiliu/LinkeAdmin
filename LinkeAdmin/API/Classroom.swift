@@ -15,12 +15,18 @@ class Classroom: Identifiable, ObservableObject {
     var teacherID: String
     var teacherName: String
     
-    init(name: String, id: String, assignments: [Assignment], teacherID: String, teacherName: String) {
-        self.name = name
-        self.id = id
-        self.assignments = assignments
-        self.teacherID = teacherID
-        self.teacherName = teacherName
+    ///Initialize Classroom, given classroom dictionary.
+    init(classroomDict: [String: Any]) {
+        id = classroomDict["id"] as? String ?? ""
+        name = classroomDict["name"] as? String ?? ""
+        teacherID = classroomDict["teacher_id"] as? String ?? ""
+        teacherName = classroomDict["teacher_name"] as? String ?? ""
+        
+        let assignmentArray = classroomDict["assignment"] as? [[String: Any]] ?? []
+        assignments = assignmentArray.map { assignmentDict -> Assignment in
+            return Assignment(assignmentDict: assignmentDict)
+        }
+        
     }
     
     ///Return Upcoming assignments (due within 7 days).
@@ -63,4 +69,5 @@ class Classroom: Identifiable, ObservableObject {
             assign.status == .completedClassroom || assign.status == .completedReminders
         }
     }
+    
 }

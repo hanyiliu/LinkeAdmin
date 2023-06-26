@@ -11,11 +11,25 @@ import GoogleSignIn
 
 class Team: ObservableObject {
     @Published var refresh: Bool = true //Call to refresh any views using this object
-    @Published var teamCode = ""
+    @Published var teamStudentCode = ""
+    @Published var teamAdminCode = ""
     @Published var students: [Student] = []
     @Published var studentGroups: [Group] = []
     @Published var admins: [Admin] = []
     var teamID: String = ""
+    
+    private var teachersByStudentCount: [(String, Int, [(Student, String)])]?
+    var teachersByStudentSorted: [(String, Int, [(Student, String)])] {
+        get {
+            if teachersByStudentCount == nil {
+                teachersByStudentCount = getTeachersByStudentCount()
+            }
+            return teachersByStudentCount!
+        }
+        set {
+            teachersByStudentCount = newValue
+        }
+    }
     
     static var started = false
     static let db = Firestore.firestore()
@@ -27,79 +41,99 @@ class Team: ObservableObject {
         //Check if user has a team ID stored in local.
         if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String {
             teamID = id
-            Task {
-                do {
-                    if let teamDictionary = try await Team.fetchData(teamID: teamID) {
-                        print("Team ID stored at local. Using it to initialize team.")
-                        try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
-                    } else {
-                        print("Data not found using Team ID.")
-                    }
-                } catch {
-                    print("Error while trying to fetch team data: \(error)")
-                }
-                print("Finished loading team.")
-                viewRouter.currentPage = .home
-            }
+            loadTeamWithID(currentAdmin: currentAdmin, viewRouter: viewRouter)
         }
         //Then check if user's ID is logged in a team's database.
         else {
             guard let adminID = GIDSignIn.sharedInstance.currentUser?.userID else {
-                viewRouter.currentPage = .home
+                //User isn't signed in.
+                viewRouter.currentPage = .googleSignIn
                 return
             }
             let teamDataRef = Firestore.firestore().collection("team_data")
             let query = teamDataRef.whereField("admins", arrayContains: adminID)
-            Task {
-                do {
-                    let snapshot = try await query.getDocuments()
-                    guard let document = snapshot.documents.first else {
-                        print("Document not found")
-                        viewRouter.currentPage = .home
-                        return
-                    }
-                    
-                    let teamDictionary = document.data()
-                    print("Admin found to be part of team online. Using it to initialize team.")
-                    try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
-                    
-                } catch {
-                    print("Error getting document: \(error)")
-                }
-                print("Finished loading team.")
-                viewRouter.currentPage = .home
-            }
+            
+            loadTeamWithDatabase(query: query, currentAdmin: currentAdmin, viewRouter: viewRouter)
         }
         //If neither, current team is initialized as empty.
         
-
+        
     }
+    
+    //Given team ID, prepare teamDictionary to pass to initializeTeam.
+    func loadTeamWithID(currentAdmin: Admin, viewRouter: ViewRouter) {
+        Task {
+            do {
+                if let teamDictionary = try await fetchData() {
+                    print("Team ID stored at local. Using it to initialize team.")
+                    try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
+                } else {
+                    print("Data not found using Team ID.")
+                }
+            } catch {
+                print("Error while trying to fetch team data: \(error)")
+            }
+            print("Finished loading team.")
+            DispatchQueue.main.async {
+                viewRouter.currentPage = .home
+            }
+        }
+    }
+    
+    //Given query of document containing current admin's ID, prepare teamDictionary to pass to initializeTeam.
+    func loadTeamWithDatabase(query: Query, currentAdmin: Admin, viewRouter: ViewRouter) {
+        Task {
+            do {
+                let snapshot = try await query.getDocuments()
+                guard let document = snapshot.documents.first else {
+                    print("Document not found")
+                    //User not part of any teams.
+                    viewRouter.currentPage = .home
+                    return
+                }
+                
+                let teamDictionary = document.data()
+                print("Admin found to be part of team online. Using it to initialize team.")
+                try await initializeTeam(teamDictionary: teamDictionary, currentAdmin: currentAdmin)
+                
+            } catch {
+                print("Error getting document: \(error)")
+            }
+            print("Finished loading team.")
+            viewRouter.currentPage = .home
+        }
+    }
+    
     ///Initializes variables, given the dictionary.
     func initializeTeam(teamDictionary: [String: Any], currentAdmin: Admin? = nil) async throws {
-
-        self.students = try await Team.initStudents(studentIDs: teamDictionary["students"] as! [String])
-
-        admins = try await Team.initAdmins(adminIDs: teamDictionary["admins"] as! [String])
+        
+        let students = try await initStudents(studentIDs: teamDictionary["students"] as! [String])
+        
+        let admins = try await initAdmins(adminIDs: teamDictionary["admins"] as! [String])
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
-      
+        
         if currentAdmin != nil {
             currentAdmin!.founder = true
         }
         
-        studentGroups = initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
+        let studentGroups = initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
         
         DispatchQueue.main.async {
-            self.teamCode = teamDictionary["team_code"] as! String
+            self.students = students
+            self.admins = admins
+            self.studentGroups = studentGroups
+            self.teamStudentCode = teamDictionary["student_code"] as! String
+            self.teamAdminCode = teamDictionary["admin_code"] as! String
         }
         teamID = teamDictionary["id"] as! String
     }
     
     ///Refresh team
     func refreshTeam() {
-        guard teamCode != "" else { return }
+        guard teamAdminCode != "" else { return }
         Task {
             do {
-                if let teamDictionary = try await Team.fetchData(teamID: teamID) {
+                if let teamDictionary = try await fetchData() {
                     try await initializeTeam(teamDictionary: teamDictionary)
                 }
             } catch {
@@ -112,7 +146,7 @@ class Team: ObservableObject {
     func joinTeam(teamCode: String) {
         Task {
             let collectionRef = Firestore.firestore().collection("team_data")
-            let query = collectionRef.whereField("team_code", isEqualTo: teamCode)
+            let query = collectionRef.whereField("admin_code", isEqualTo: teamCode)
             
             do {
                 let snapshot = try await query.getDocuments()
@@ -136,12 +170,12 @@ class Team: ObservableObject {
         
         //let db = Firestore.firestore()
         //let collection = db.collection("team_data")
-
+        
         teamID = UUID().uuidString
         //TODO: Check for uniqueness
-        teamCode = generateTeamCode()
+        (teamStudentCode, teamAdminCode) = generateTeamCodes()
         //TODO: Check for uniqueness
-
+        
         
         admins.append(Admin(name: GIDSignIn.sharedInstance.currentUser?.profile?.name ?? "",
                             id: GIDSignIn.sharedInstance.currentUser?.userID ?? "",
@@ -151,8 +185,8 @@ class Team: ObservableObject {
         
         uploadData(data: createTeamData())
         UpdateValue.saveToLocal(key: "TEAM_ID", value: teamID)
-
-
+        
+        
     }
     
     ///Remove team from database.
@@ -182,28 +216,31 @@ class Team: ObservableObject {
     
     ///Set all team values to nil / empty
     func clearLocalTeamData() {
-        teamCode = ""
+        teamStudentCode = ""
+        teamAdminCode = ""
         students = []
         admins = []
         teamID = ""
     }
-
+    
     ///Generates a random six-letter team code for use in the application.
-    func generateTeamCode() -> String {
+    func generateTeamCodes() -> (String, String) {
         // Generate a random team code
         let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let randomCode = String((0..<6).map { _ in letters.randomElement()! })
+        let randomStudentCode = String((0..<6).map { _ in letters.randomElement()! })
+        let randomAdminCode = String((0..<7).map { _ in letters.randomElement()! })
         
         // Set the team code
-        return randomCode
+        return (randomStudentCode, randomAdminCode)
     }
     
     ///Creates a team document
     func createTeamData() -> [String: Any] {
-
+        
         var teamData: [String: Any] = [:]
         teamData["id"] = teamID
-        teamData["team_code"] = teamCode
+        teamData["student_code"] = teamStudentCode
+        teamData["admin_code"] = teamAdminCode
         teamData["team_founder"] = admins.first(where: { $0.founder })!.id
         
         var studentArray: [String] = []
@@ -220,14 +257,14 @@ class Team: ObservableObject {
         
         teamData["groups"] = []
         
-
+        
         
         return teamData
     }
     
     ///Upload team data to Firebase
     func uploadData(data: [String:Any]) {
-        print("Trying to upload data to Firestore")
+        print("Team: Trying to upload data to Firestore")
         let document = Team.db.collection("team_data").document("\(teamID)")
         document.setData(data)
     }
@@ -307,7 +344,6 @@ class Team: ObservableObject {
     
     ///Return all teacher's names with their corresponding # of students.
     func getTeachersByStudentCount() -> [(String, Int, [(Student, String)])] {
-        print("called")
         var teachersWithStudents: [(String, Int, [(Student, String)])] = []
         
         // Create a dictionary to store teachers and their associated students
@@ -334,13 +370,13 @@ class Team: ObservableObject {
         
         return teachersWithStudents
     }
-
+    
     
     ///Fetch team data from Firebase. Returns team dictionary.
-    static func fetchData(teamID: String) async throws -> [String: Any]? {
-        let collectionRef = db.collection("team_data")
+    func fetchData() async throws -> [String: Any]? {
+        let collectionRef = Team.db.collection("team_data")
         let documentRef = collectionRef.document(teamID)
-
+        
         do {
             let document = try await documentRef.getDocument()
             
@@ -352,14 +388,14 @@ class Team: ObservableObject {
         } catch {
             throw error
         }
-
+        
         // Return empty arrays if the document or the required fields are not found
         return nil
     }
     
     ///Initializes students array, given all students' IDs.
-    static func initStudents(studentIDs: [String]) async throws -> [Student] {
-        let collectionRef = db.collection("student_data")
+    func initStudents(studentIDs: [String]) async throws -> [Student] {
+        let collectionRef = Team.db.collection("student_data")
         
         var students: [Student] = []
         
@@ -377,9 +413,9 @@ class Team: ObservableObject {
     }
     
     ///Initializes admins array, given all admins' IDs.
-    static func initAdmins(adminIDs: [String]) async throws -> [Admin] {
-        let collectionRef = db.collection("admin_data")
-
+    func initAdmins(adminIDs: [String]) async throws -> [Admin] {
+        let collectionRef = Team.db.collection("admin_data")
+        
         var admins: [Admin] = []
         for adminID in adminIDs {
             do {
@@ -399,11 +435,10 @@ class Team: ObservableObject {
         var studentGroups: [Group] = []
         
         for groupData in groups {
-            guard
-                let name = groupData["name"] as? String,
-                let id = groupData["id"] as? String,
-                let studentIDs = groupData["students"] as? [String],
-                let adminIDs = groupData["admins"] as? [String]
+            guard let name = groupData["name"] as? String,
+                  let id = groupData["id"] as? String,
+                  let studentIDs = groupData["students"] as? [String],
+                  let adminIDs = groupData["admins"] as? [String]
             else {
                 continue
             }
