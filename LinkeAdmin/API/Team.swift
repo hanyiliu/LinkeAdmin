@@ -57,6 +57,17 @@ class Team: ObservableObject {
         }
         //If neither, current team is initialized as empty.
         
+        DispatchQueue.main.async {
+            if let data = UpdateValue.loadFromLocal(key: "SHOW_HELP", type: "Bool") as? Bool {
+                if data {
+                    viewRouter.currentPage = .help
+                } else {
+                    viewRouter.currentPage = .home
+                }
+            } else {
+                viewRouter.currentPage = .help
+            }
+        }
         
     }
     
@@ -74,9 +85,6 @@ class Team: ObservableObject {
                 print("Error while trying to fetch team data: \(error)")
             }
             print("Finished loading team.")
-            DispatchQueue.main.async {
-                viewRouter.currentPage = .home
-            }
         }
     }
     
@@ -100,15 +108,14 @@ class Team: ObservableObject {
                 print("Error getting document: \(error)")
             }
             print("Finished loading team.")
-            viewRouter.currentPage = .home
         }
     }
     
     ///Initializes variables, given the dictionary.
     func initializeTeam(teamDictionary: [String: Any], currentAdmin: Admin? = nil) async throws {
+        teamID = teamDictionary["id"] as! String
         
         let students = try await initStudents(studentIDs: teamDictionary["students"] as! [String])
-        
         let admins = try await initAdmins(adminIDs: teamDictionary["admins"] as! [String])
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
         
@@ -116,21 +123,20 @@ class Team: ObservableObject {
             currentAdmin!.founder = true
         }
         
-        let studentGroups = initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
-        
         DispatchQueue.main.async {
             self.students = students
             self.admins = admins
-            self.studentGroups = studentGroups
+            self.studentGroups = self.initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
             self.teamStudentCode = teamDictionary["student_code"] as! String
             self.teamAdminCode = teamDictionary["admin_code"] as! String
         }
-        teamID = teamDictionary["id"] as! String
+        
     }
     
     ///Refresh team
     func refreshTeam() {
         guard teamAdminCode != "" else { return }
+        teachersByStudentCount = nil
         Task {
             do {
                 if let teamDictionary = try await fetchData() {
@@ -301,9 +307,56 @@ class Team: ObservableObject {
         }
     }
     
+    ///Remove admin's ID from the team document's admins array.
+    func removeAdminID(document: DocumentReference, adminID: String) {
+        document.updateData(["admins": FieldValue.arrayRemove([adminID])]) { error in
+            if let error = error {
+                print("Error removing ID \(adminID) from admins array: \(error)")
+            } else {
+                print("ID removed from admins array successfully")
+            }
+        }
+    }
+    
+    ///Remove student's ID from the team document's students array.
+    func removeStudentID(document: DocumentReference, studentID: String) {
+        document.updateData(["students": FieldValue.arrayRemove([studentID])]) { error in
+            if let error = error {
+                print("Error removing ID \(studentID) from students array: \(error)")
+            } else {
+                print("ID removed from students array successfully")
+            }
+        }
+    }
+
+    ///Remove admin from Team.
+    func removeAdmin(adminID: String) {
+        if let index = admins.firstIndex(where: { $0.id == adminID }) {
+            admins.remove(at: index)
+            
+            // Call your removeAdminID function here
+            let documentRef = Team.db.collection("team_data").document(teamID)
+            removeAdminID(document: documentRef, adminID: adminID)
+        }
+    }
+
+    
+    ///Remove student from Team.
+    func removeStudent(studentID: String) {
+        if let index = students.firstIndex(where: { $0.id == studentID }) {
+            students.remove(at: index)
+            removeStudentFromTeachers(studentID: studentID)
+            // Call your removeStudentID function here
+            let documentRef = Team.db.collection("team_data").document(teamID)
+            removeStudentID(document: documentRef, studentID: studentID)
+        }
+    }
+
+
+    
     ///Create new empty group
     func createGroup(name: String, founderID: String) {
-        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)", founder: admins.first(where: { $0.id == founderID } )!))
+        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)"))
     }
     
     ///Delete group
@@ -371,6 +424,28 @@ class Team: ObservableObject {
         return teachersWithStudents
     }
     
+    /// Remove student from teachersByStudentSorted and update counts.
+    func removeStudentFromTeachers(studentID: String) {
+        // Check if the teachersByStudentCount variable is initialized
+        guard var teachersByStudentCount = teachersByStudentCount else {
+            return
+        }
+        
+        // Iterate through each teacher's students
+        for (index, (teacherName, _, students)) in teachersByStudentCount.enumerated() {
+            let updatedStudents = students.filter { student, _ in
+                student.id != studentID
+            }
+            let updatedStudentCount = updatedStudents.count
+            
+            teachersByStudentCount[index] = (teacherName, updatedStudentCount, updatedStudents)
+        }
+        
+        // Update the teachersByStudentSorted variable
+        self.teachersByStudentCount = teachersByStudentCount
+    }
+
+
     
     ///Fetch team data from Firebase. Returns team dictionary.
     func fetchData() async throws -> [String: Any]? {
@@ -442,20 +517,21 @@ class Team: ObservableObject {
             else {
                 continue
             }
-            
-            let group = Group(team: self, name: name, id: id)
-            
+            print("ids: \(studentIDs)")
+            print("students: \(students)")
             // Initialize students
-            group.students = studentIDs.compactMap { studentID in
+            let groupStudents = studentIDs.compactMap { studentID in
                 // Find the student with the matching ID in the Team's students array
                 return students.first { $0.id == studentID }
             }
             
             // Initialize admins
-            group.admins = adminIDs.compactMap { adminID in
+            let groupAdmins = adminIDs.compactMap { adminID in
                 // Find the admin with the matching ID in the Team's admins array
                 return admins.first { $0.id == adminID }
             }
+            
+            let group = Group(team: self, name: name, id: id, students: groupStudents, admins: groupAdmins)
             
             studentGroups.append(group)
         }

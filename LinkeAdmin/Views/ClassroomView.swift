@@ -13,6 +13,17 @@ struct ClassroomView: View {
     
     var body: some View {
         List {
+            if classroom.hiddenByStudent {
+                HStack {
+                    Spacer()
+                    Text("This classroom was manually hidden by your student and its assignments will not show up outside of this page. It may be no longer used; please confirm with your student.")
+                        .foregroundColor(Color.gray)
+                        .multilineTextAlignment(.center)
+                    
+                    Spacer()
+                }
+            }
+            
             Section() {
                 HStack{
                     Text("Teacher")

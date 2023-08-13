@@ -16,15 +16,28 @@ struct GroupView: View {
     @State private var selectedStudents: Set<Student> = []
     @State private var selectedAdmins: Set<Admin> = []
 
+    @State private var isShowingNameChangeAlert = false
+    @State private var newName = ""
+    
     var body: some View {
         Form {
             Section(header: Text("Students")) {
                 ForEach(group.students) { student in
                     NavigationLink(destination: StudentView(student: student)) {
+                        HomeView.studentStatusImage(for: student)
                         Text(student.name)
                     }
+                    .swipeActions {
+                        if let index = group.students.firstIndex(of: student) {
+                            Button(role: .destructive) {
+                                group.deleteStudent(at: IndexSet(integer: index))
+                            } label: {
+                                Text("Remove")
+                            }
+                        }
+                    }
+                
                 }
-                .onDelete(perform: group.deleteStudent)
                 Button("Add Students") {
                     isShowingAddStudentsSheet = true
                 }
@@ -33,8 +46,18 @@ struct GroupView: View {
             Section(header: Text("Admins")) {
                 ForEach(group.admins) { admin in
                     Text(admin.name)
+                    .swipeActions {
+                        if let index = group.admins.firstIndex(of: admin) {
+                            if !admin.founder {
+                                Button(role: .destructive) {
+                                    group.deleteAdmin(at: IndexSet(integer: index))
+                                } label: {
+                                    Text("Remove")
+                                }
+                            }
+                        }
+                    }
                 }
-                .onDelete(perform: group.deleteAdmin)
                 Button("Add Admins") {
                     isShowingAddAdminsSheet = true
                 }
@@ -47,6 +70,24 @@ struct GroupView: View {
             AddAdminsSheet(group: group, selectedAdmins: $selectedAdmins)
         }
         .navigationTitle(group.name)
+        .navigationBarItems(trailing: Button(action: {
+            // Show the name change alert
+            isShowingNameChangeAlert = true
+            newName = group.name
+        }) {
+            Text("Edit Name")
+        })
+        .alert("Change Group Name", isPresented: $isShowingNameChangeAlert) {
+            TextField(group.name, text: $newName)
+            HStack {
+                Button("Cancel") {
+                    isShowingNameChangeAlert = false
+                }
+                Button("Change") {
+                    group.changeName(name: newName)
+                }
+            }
+        }
     }
 }
 
@@ -96,6 +137,7 @@ struct AddStudentsSheet: View {
                 }
             }
         }
+        .presentationDetents([PresentationDetent.medium])
     }
     
     private func toggleSelection(student: Student) {
@@ -159,6 +201,7 @@ struct AddAdminsSheet: View {
                 }
             }
         }
+        .presentationDetents([PresentationDetent.medium])
     }
     
     private func toggleSelection(admin: Admin) {

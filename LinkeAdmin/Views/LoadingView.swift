@@ -1,6 +1,6 @@
 //
 //  LoadingView.swift
-//  Linker
+//  Linke for Admins
 //
 //  Created by Hanyi Liu on 1/9/23.
 //

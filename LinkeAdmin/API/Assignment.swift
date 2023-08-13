@@ -29,7 +29,7 @@ class Assignment: Identifiable {
             dateComponents.day = day
             dateComponents.month = month
             dateComponents.year = year
-            dueDate = calendar.date(from: dateComponents)
+            
             if let dueTimeDict = assignmentDict["due_time"] as? [String: Int],
                let hour = dueTimeDict["hour"],
                let minute = dueTimeDict["minute"]
@@ -37,7 +37,14 @@ class Assignment: Identifiable {
                 dateComponents.hour = hour
                 dateComponents.minute = minute
                 dueDate = calendar.date(from: dateComponents)
+                dueDate = Assignment.toLocalTime(gmtDate: dueDate!)
+            } else {
+                dateComponents.hour = 23
+                dateComponents.minute = 59
+                dueDate = calendar.date(from: dateComponents)
             }
+            
+            
         }
         self.dueDate = dueDate
         
@@ -60,11 +67,20 @@ class Assignment: Identifiable {
         return gmtDate.addingTimeInterval(TimeInterval(secondsFromGMT))
     }
     
-    ///Return dueDate in a readable String format.
+    /// Return dueDate in a readable String format.
     func formattedDueDate() -> String {
         guard let dueDate = dueDate else { return "No Due Date" }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/d hh:mm a"
+        
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let dueYear = Calendar.current.component(.year, from: dueDate)
+        
+        if currentYear != dueYear {
+            dateFormatter.dateFormat = "M/d/yy h:mm a"
+        } else {
+            dateFormatter.dateFormat = "M/d h:mm a"
+        }
+        
         return dateFormatter.string(from: dueDate)
     }
     

@@ -9,29 +9,27 @@ import Foundation
 import FirebaseFirestore
 class Group: ObservableObject, Identifiable {
     var team: Team
-    var name: String
+    @Published var name: String
     var id: String
     @Published var students: [Student]
     @Published var admins: [Admin]
 
+    ///Use data to declare local variable of Group.
+    init(team: Team, name: String, id: String, students: [Student], admins: [Admin]) {
+        self.team = team
+        self.name = name
+        self.id = id
+        self.students = students
+        self.admins = admins
+    }
+    
+    ///Create an empty Group.
     init(team: Team, name: String, id: String) {
         self.team = team
         self.name = name
         self.id = id
         self.students = []
-        self.admins = []
-        
-        Task {
-            await uploadData()
-        }
-    }
-    
-    init(team: Team, name: String, id: String, founder: Admin) {
-        self.team = team
-        self.name = name
-        self.id = id
-        self.students = []
-        self.admins = [founder]
+        self.admins = [team.admins.first(where: { $0.founder == true })!]
         
         Task {
             await uploadData()
@@ -74,6 +72,14 @@ class Group: ObservableObject, Identifiable {
         Task {
             await uploadData()
         }
+    }
+    
+    func changeName(name: String) {
+        self.name = name
+        Task {
+            await uploadData()
+        }
+        team.refresh.toggle()
     }
     
     ///Upload group data to Firebase Firestore.

@@ -28,8 +28,9 @@ struct ContentView: View {
                                       email: GIDSignIn.sharedInstance.currentUser?.profile?.email ?? "")
                 team = Team(currentAdmin: admin!, viewRouter: viewRouter)
             }
+        case .help:
+            HelpView(viewRouter: viewRouter, fromHome: false)
         case .home:
-            
             HomeView(viewRouter: viewRouter, team: team!, admin: admin!)
                 
         }
@@ -41,5 +42,6 @@ enum Page {
     case loading
     case googleSignIn
     case loadingSignedIn
+    case help
     case home
 }

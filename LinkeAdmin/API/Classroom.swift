@@ -10,6 +10,7 @@ import Foundation
 class Classroom: Identifiable, ObservableObject {
     var name: String
     var id: String
+    var hiddenByStudent: Bool
     var assignments: [Assignment]
     
     var teacherID: String
@@ -21,6 +22,7 @@ class Classroom: Identifiable, ObservableObject {
         name = classroomDict["name"] as? String ?? ""
         teacherID = classroomDict["teacher_id"] as? String ?? ""
         teacherName = classroomDict["teacher_name"] as? String ?? ""
+        hiddenByStudent = classroomDict["hidden"] as? Bool ?? false
         
         let assignmentArray = classroomDict["assignment"] as? [[String: Any]] ?? []
         assignments = assignmentArray.map { assignmentDict -> Assignment in
@@ -29,20 +31,20 @@ class Classroom: Identifiable, ObservableObject {
         
     }
     
-    ///Return Upcoming assignments (due within 7 days).
+    ///Return Upcoming assignments (due within 3 days).
     var upcomingAssignments: [Assignment] {
         let currentDate = Date()
         let calendar = Calendar.current
-        let sevenDaysFromNow = calendar.date(byAdding: .day, value: 7, to: currentDate)!
+        let sevenDaysFromNow = calendar.date(byAdding: .day, value: 3, to: currentDate)!
         
         return assignments.filter { assign in
             if let dueDate = assign.dueDate {
-                
-                return assign.status == .inProgress && calendar.isDate(assign.dueDate!, inSameDayAs: sevenDaysFromNow) && dueDate > currentDate
+                return assign.status == .inProgress && dueDate > currentDate && dueDate <= sevenDaysFromNow
             }
             return false
         }
     }
+
     
     ///Return Missing assignments.
     var missingAssignments: [Assignment] {

@@ -29,6 +29,28 @@ struct HomeView: View {
     @State private var fakeStudentCount = 0
     @State private var fakeAdminCount = 0
     
+    static func studentStatusImage(for student: Student) -> some View {
+        let symbol: String
+        let color: Color
+        
+        if student.lastUpdated < Calendar.current.date(byAdding: .day, value: -7, to: Date())! {
+            symbol = "questionmark.circle.fill"
+            color = Color.gray
+        } else if student.hasMissingAssignments {
+            symbol = "exclamationmark.circle.fill"
+            color = Color.red
+        } else if student.hasUpcomingAssignments {
+            symbol = "exclamationmark.circle.fill"
+            color = Color.yellow
+        } else {
+            symbol = "checkmark.circle.fill"
+            color = Color.green
+        }
+        
+        return Image(systemName: symbol)
+            .foregroundColor(color)
+    }
+    
     var body: some View {
         let user = GIDSignIn.sharedInstance.currentUser
         
@@ -164,26 +186,6 @@ struct HomeView: View {
                             }
                         }
                         
-                        Section(header: Text("Team Info")) {
-                            HStack {
-                                Text("Team Student Code")
-                                Spacer()
-                                Text(team.teamStudentCode).foregroundColor(Color.gray)
-                            }
-                            
-                            HStack {
-                                Text("Team Admin Code")
-                                Spacer()
-                                Text(team.teamAdminCode).foregroundColor(Color.gray)
-                            }
-                            
-                            HStack {
-                                Text("Founder")
-                                Spacer()
-                                Text(team.admins.first(where: { $0.founder })?.name ?? "No Founder").foregroundColor(Color.gray)
-                            }
-                        }
-                        
                         Section(header: Text("Team Students")) {
                             if(team.students.count == 0) {
                                 HStack {
@@ -196,9 +198,20 @@ struct HomeView: View {
                             } else {
                                 ForEach(team.students) { student in
                                     NavigationLink(destination: StudentView(student: student)) {
+                                        HomeView.studentStatusImage(for: student)
                                         Text(student.name)
                                     }
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            let studentID = student.id
+                                            team.removeStudent(studentID: studentID)
+                                        } label: {
+                                            Text("Remove")
+                                        }
+                                    }
+                                    
                                 }
+ 
                             }
                         }
                         
@@ -214,12 +227,50 @@ struct HomeView: View {
                             } else {
                                 ForEach(team.admins) { admin in
                                     Text(admin.name)
+                                    .swipeActions {
+                                        if !admin.founder {
+                                            Button(role: .destructive) {
+                                                let adminID = admin.id
+                                                team.removeAdmin(adminID: adminID)
+                                            } label: {
+                                                Text("Remove")
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        
+                        Section(header: Text("Team Info")) {
+                            HStack {
+                                Text("Team Student Code")
+                                Spacer()
+                                //Text(team.teamStudentCode).foregroundColor(Color.gray)
+                                Text("ABCDEF").foregroundColor(Color.gray)
+                            }
+                            
+                            HStack {
+                                Text("Team Admin Code")
+                                Spacer()
+                                //Text(team.teamAdminCode).foregroundColor(Color.gray)
+                                Text("TUVWXYZ").foregroundColor(Color.gray)
+                            }
+                            
+                            HStack {
+                                Text("Founder")
+                                Spacer()
+                                Text(team.admins.first(where: { $0.founder })?.name ?? "No Founder").foregroundColor(Color.gray)
+                            }
+                        }
+                        
 
                     }
                     Section() {
+                        
+                        NavigationLink(destination: HelpView(viewRouter: viewRouter, fromHome: true)) {
+                            Text("Help")
+                        }
+                        
                         if team.teamAdminCode != "" {
                             if(admin.founder) {
                                 Button(action: {
@@ -292,8 +343,8 @@ struct HomeView: View {
                             let randomInt = Int.random(in: 0...2)
                             var classroomArray: [[String: Any]] = []
                             var classroom: [String: Any] = ["name": "Math \(fakeStudentCount / 5 + randomInt)", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Bobby Joe 0"]
-                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 6, "day": 15]] as [String : Any]
-                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 6, "day": 20]] as [String : Any]
+                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
+                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
                             classroom["assignment"] = [assignment1, assignment2]
                             classroomArray.append(classroom)
                             

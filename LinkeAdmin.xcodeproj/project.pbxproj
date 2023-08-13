@@ -10,6 +10,8 @@
 		0B1BCA462A421B4000D2A068 /* TeachersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1BCA452A421B4000D2A068 /* TeachersView.swift */; };
 		0B2F47AA2A3BA6400037002F /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47A92A3BA6400037002F /* Group.swift */; };
 		0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47AB2A3CDF070037002F /* GroupView.swift */; };
+		0B34266B2A88634A00E9CF83 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B34266A2A88634A00E9CF83 /* HelpView.swift */; };
+		0B72196F2A4BF18200D691AB /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B72196E2A4BF18200D691AB /* StoreKit.framework */; };
 		0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */; };
 		0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */; };
 		0BDB4DE12A292E7E00B0AEE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BDB4DE02A292E7E00B0AEE1 /* Assets.xcassets */; };
@@ -36,6 +38,8 @@
 		0B1BCA452A421B4000D2A068 /* TeachersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeachersView.swift; sourceTree = "<group>"; };
 		0B2F47A92A3BA6400037002F /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		0B2F47AB2A3CDF070037002F /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
+		0B34266A2A88634A00E9CF83 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		0B72196E2A4BF18200D691AB /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0BDB4DD92A292E7D00B0AEE1 /* LinkeAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkeAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkeAdminApp.swift; sourceTree = "<group>"; };
 		0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -68,6 +72,7 @@
 				6272FAD92562808FCC8F4303 /* libPods-LinkeAdmin.a in Frameworks */,
 				0BDB4DEC2A292EEE00B0AEE1 /* FirebaseFirestore in Frameworks */,
 				0BDB4DEE2A292EEE00B0AEE1 /* FirebaseFirestoreSwift in Frameworks */,
+				0B72196F2A4BF18200D691AB /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +129,7 @@
 				0BEFD78D2A2D6C39004A892F /* ClassroomView.swift */,
 				0BDB4DF42A292F7400B0AEE1 /* LoadingView.swift */,
 				0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */,
+				0B34266A2A88634A00E9CF83 /* HelpView.swift */,
 				0BDB4DF62A292F9900B0AEE1 /* HomeView.swift */,
 				0B2F47AB2A3CDF070037002F /* GroupView.swift */,
 			);
@@ -147,6 +153,7 @@
 		D14CCA8954BF646AEF397AD1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0B72196E2A4BF18200D691AB /* StoreKit.framework */,
 				89176B94F230968B239E5E39 /* libPods-LinkeAdmin.a */,
 			);
 			name = Frameworks;
@@ -296,6 +303,7 @@
 				0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */,
 				0BDB4DF72A292F9900B0AEE1 /* HomeView.swift in Sources */,
 				0BDB4DFF2A2935D600B0AEE1 /* User.swift in Sources */,
+				0B34266B2A88634A00E9CF83 /* HelpView.swift in Sources */,
 				0BDB4DF52A292F7400B0AEE1 /* LoadingView.swift in Sources */,
 				0BEFD78C2A2AC17B004A892F /* Assignment.swift in Sources */,
 				0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */,

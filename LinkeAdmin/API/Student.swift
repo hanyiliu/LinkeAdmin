@@ -13,6 +13,26 @@ class Student: User {
     var classrooms: [Classroom]
     var lastUpdated: Date
     
+    var hasMissingAssignments: Bool {
+        classrooms.contains { classroom in
+            classroom.missingAssignments.contains { assignment in
+                assignment.dueDate != nil && assignment.dueDate! < Date()
+            }
+        }
+    }
+    
+    var hasUpcomingAssignments: Bool {
+        classrooms.contains { classroom in
+            classroom.upcomingAssignments.contains { assignment in
+                if let dueDate = assignment.dueDate {
+                    let twoDaysFromNow = Calendar.current.date(byAdding: .day, value: 2, to: Date())!
+                    return dueDate >= Date() && dueDate <= twoDaysFromNow
+                }
+                return false
+            }
+        }
+    }
+    
     init(name: String, id: String, email: String, classrooms: [Classroom], lastUpdated: Date) {
         self.classrooms = classrooms
         self.lastUpdated = lastUpdated
@@ -36,9 +56,19 @@ class Student: User {
         super.init(name: name, id: id, email: email)
     }
     
+    /// Return dueDate in a readable String format.
     func formattedUpdateDate() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/d hh:mm a"
+        
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let dueYear = Calendar.current.component(.year, from: lastUpdated)
+        
+        if currentYear != dueYear {
+            dateFormatter.dateFormat = "M/d/yy h:mm a"
+        } else {
+            dateFormatter.dateFormat = "M/d h:mm a"
+        }
+        
         return dateFormatter.string(from: lastUpdated)
     }
 
