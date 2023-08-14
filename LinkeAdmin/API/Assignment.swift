@@ -53,9 +53,10 @@ class Assignment: Identifiable {
         
         if(statusID == 1) {
             status = .completedClassroom
-        } else if(statusID == 2) {
-            status = .completedReminders
-        }
+        }// else if(statusID == 2) {
+//            //status = .completedReminders TODO: implement feature to toggle this
+//            status = .inProgress
+//        }
         self.status = status
     }
     

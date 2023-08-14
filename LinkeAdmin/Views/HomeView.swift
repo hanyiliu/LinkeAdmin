@@ -245,15 +245,15 @@ struct HomeView: View {
                             HStack {
                                 Text("Team Student Code")
                                 Spacer()
-                                //Text(team.teamStudentCode).foregroundColor(Color.gray)
-                                Text("ABCDEF").foregroundColor(Color.gray)
+                                Text(team.teamStudentCode).foregroundColor(Color.gray)
+                               
                             }
                             
                             HStack {
                                 Text("Team Admin Code")
                                 Spacer()
-                                //Text(team.teamAdminCode).foregroundColor(Color.gray)
-                                Text("TUVWXYZ").foregroundColor(Color.gray)
+                                Text(team.teamAdminCode).foregroundColor(Color.gray)
+                                
                             }
                             
                             HStack {
@@ -330,69 +330,69 @@ struct HomeView: View {
                         }
                     }
                     
-                    Section(header: Text("REMOVE AT RELEASE")) {
-                        Button("Add fake student to team") {
-                            //Create fake dictionary
-                            let studentID = "0000\(fakeStudentCount)"
-                            var studentDictionary: [String: Any] = [:]
-                            studentDictionary["name"] = "John Doe \(fakeStudentCount)"
-                            studentDictionary["id"] = studentID
-                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
-                            studentDictionary["last_updated"] = Date()
-                            let classroomCount = fakeStudentCount / 3
-                            let randomInt = Int.random(in: 0...2)
-                            var classroomArray: [[String: Any]] = []
-                            var classroom: [String: Any] = ["name": "Math \(fakeStudentCount / 5 + randomInt)", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Bobby Joe 0"]
-                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
-                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
-                            classroom["assignment"] = [assignment1, assignment2]
-                            classroomArray.append(classroom)
-                            
-                            studentDictionary["classroom"] = classroomArray
-                            //End fake dictionary creation
-                            
-                            fakeStudentCount += 1
-                            
-                            print("Fake Student: Trying to upload data to Firestore")
-                            let studentDocument = Team.db.collection("student_data").document(studentID)
-                            studentDocument.setData(studentDictionary)
-                            
-                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
-                                if let error = error {
-                                    print("Error appending ID to students array: \(error)")
-                                } else {
-                                    print("ID appended to students array successfully")
-                                }
-                            }
-                        }
-                        
-                        Button("Add fake admin to team") {
-                            //Create fake dictionary
-                            let adminID = "9999\(fakeAdminCount)"
-                            var adminDictionary: [String: Any] = [:]
-                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
-                            adminDictionary["id"] = adminID
-                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
-
-                            //End fake dictionary creation
-                            
-                            fakeAdminCount += 1
-                            
-                            print("Fake Admin: Trying to upload data to Firestore")
-                            let adminDocument = Team.db.collection("admin_data").document(adminID)
-                            adminDocument.setData(adminDictionary)
-                            
-                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
-                                if let error = error {
-                                    print("Error appending ID to admins array: \(error)")
-                                } else {
-                                    print("ID appended to admins array successfully")
-                                }
-                            }
-                        }
-                    }
+//                    Section(header: Text("REMOVE AT RELEASE")) {
+//                        Button("Add fake student to team") {
+//                            //Create fake dictionary
+//                            let studentID = "0000\(fakeStudentCount)"
+//                            var studentDictionary: [String: Any] = [:]
+//                            studentDictionary["name"] = "John Doe \(fakeStudentCount)"
+//                            studentDictionary["id"] = studentID
+//                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
+//                            studentDictionary["last_updated"] = Date()
+//                            let classroomCount = fakeStudentCount / 3
+//                            let randomInt = Int.random(in: 0...2)
+//                            var classroomArray: [[String: Any]] = []
+//                            var classroom: [String: Any] = ["name": "Math \(fakeStudentCount / 5 + randomInt)", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Bobby Joe 0"]
+//                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
+//                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
+//                            classroom["assignment"] = [assignment1, assignment2]
+//                            classroomArray.append(classroom)
+//
+//                            studentDictionary["classroom"] = classroomArray
+//                            //End fake dictionary creation
+//
+//                            fakeStudentCount += 1
+//
+//                            print("Fake Student: Trying to upload data to Firestore")
+//                            let studentDocument = Team.db.collection("student_data").document(studentID)
+//                            studentDocument.setData(studentDictionary)
+//
+//                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+//                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
+//                                if let error = error {
+//                                    print("Error appending ID to students array: \(error)")
+//                                } else {
+//                                    print("ID appended to students array successfully")
+//                                }
+//                            }
+//                        }
+//
+//                        Button("Add fake admin to team") {
+//                            //Create fake dictionary
+//                            let adminID = "9999\(fakeAdminCount)"
+//                            var adminDictionary: [String: Any] = [:]
+//                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
+//                            adminDictionary["id"] = adminID
+//                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
+//
+//                            //End fake dictionary creation
+//
+//                            fakeAdminCount += 1
+//
+//                            print("Fake Admin: Trying to upload data to Firestore")
+//                            let adminDocument = Team.db.collection("admin_data").document(adminID)
+//                            adminDocument.setData(adminDictionary)
+//
+//                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+//                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
+//                                if let error = error {
+//                                    print("Error appending ID to admins array: \(error)")
+//                                } else {
+//                                    print("ID appended to admins array successfully")
+//                                }
+//                            }
+//                        }
+//                    }
                     Logo()
                     
                 }
