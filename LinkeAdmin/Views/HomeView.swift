@@ -321,6 +321,7 @@ struct HomeView: View {
                                 message: Text("Are you sure you want to sign out?"),
                                 primaryButton: .destructive(Text("Sign Out"), action: {
                                     GIDSignIn.sharedInstance.signOut()
+                                    UpdateValue.saveToLocal(key: "SHOW_HELP", value: true)
                                     team.clearLocalTeamData()
                                     admin.clearLocalAdminData()
                                     viewRouter.currentPage = .googleSignIn
@@ -329,24 +330,36 @@ struct HomeView: View {
                             )
                         }
                     }
-                    
+//                    
 //                    Section(header: Text("REMOVE AT RELEASE")) {
 //                        Button("Add fake student to team") {
 //                            //Create fake dictionary
 //                            let studentID = "0000\(fakeStudentCount)"
 //                            var studentDictionary: [String: Any] = [:]
-//                            studentDictionary["name"] = "John Doe \(fakeStudentCount)"
+//                            studentDictionary["name"] = "Student \(fakeStudentCount)"
 //                            studentDictionary["id"] = studentID
 //                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
 //                            studentDictionary["last_updated"] = Date()
 //                            let classroomCount = fakeStudentCount / 3
 //                            let randomInt = Int.random(in: 0...2)
 //                            var classroomArray: [[String: Any]] = []
-//                            var classroom: [String: Any] = ["name": "Math \(fakeStudentCount / 5 + randomInt)", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Bobby Joe 0"]
-//                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
+//                            var classroom: [String: Any] = ["name": "Math", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Math Teacher"]
+//                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": Int.random(in: (14 - 2)...(14 + 5))]] as [String : Any]
 //                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
-//                            classroom["assignment"] = [assignment1, assignment2]
+//                            let assignment3 = ["name": "Homework 3", "id": "3", "due_date": ["year": 2023, "month": 8, "day": 18]] as [String : Any]
+//                            let assignment4 = ["name": "Homework 4", "id": "4", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
+//                            let assignment5 = ["name": "Homework 5", "id": "5", "due_date": ["year": 2023, "month": 8, "day": 14]] as [String : Any]
+//                            classroom["assignment"] = [assignment1, assignment2, assignment3, assignment4, assignment5]
 //                            classroomArray.append(classroom)
+//                            
+//                            var classroom2: [String: Any] = ["name": "English", "id": "12346\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4441", "teacher_name" : "English Teacher"]
+//                            classroomArray.append(classroom2)
+//                            
+//                            var classroom3: [String: Any] = ["name": "History", "id": "12356\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4442", "teacher_name" : "History Teacher"]
+//                            classroomArray.append(classroom3)
+//                            
+//                            var classroom4: [String: Any] = ["name": "Science", "id": "12246\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4443", "teacher_name" : "Science Teacher"]
+//                            classroomArray.append(classroom4)
 //
 //                            studentDictionary["classroom"] = classroomArray
 //                            //End fake dictionary creation

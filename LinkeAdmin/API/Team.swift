@@ -39,7 +39,7 @@ class Team: ObservableObject {
         Team.started = true
         print("Starting to load team.")
         //Check if user has a team ID stored in local.
-        if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String {
+        if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String, id.count != 0 {
             teamID = id
             loadTeamWithID(currentAdmin: currentAdmin, viewRouter: viewRouter)
         }
@@ -119,7 +119,7 @@ class Team: ObservableObject {
         let admins = try await initAdmins(adminIDs: teamDictionary["admins"] as! [String])
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
         
-        if currentAdmin != nil {
+        if currentAdmin != nil, currentAdmin!.id == teamDictionary["team_founder"] as! String {
             currentAdmin!.founder = true
         }
         
@@ -227,6 +227,7 @@ class Team: ObservableObject {
         students = []
         admins = []
         teamID = ""
+        UpdateValue.saveToLocal(key: "TEAM_ID", value: "")
     }
     
     ///Generates a random six-letter team code for use in the application.
