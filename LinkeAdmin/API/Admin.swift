@@ -29,7 +29,17 @@ class Admin: User {
         print("Admin: Trying to upload data to Firestore")
         let document = Team.db.collection("admin_data").document(id)
         document.setData(data)
-
+    }
+    
+    ///Delete admin data from Firestore.
+    func delete() {
+        Task {
+            let adminDocRef = Team.db.collection("admin_data").document(id)
+            try await adminDocRef.delete()
+            
+            print("Admin deleted successfully.")
+            clearLocalAdminData()
+        }
     }
     
     ///Clear local admin data.

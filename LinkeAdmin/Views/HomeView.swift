@@ -267,6 +267,10 @@ struct HomeView: View {
                     }
                     Section() {
                         
+                        NavigationLink(destination: SettingsView(viewRouter: viewRouter, team: team, admin: admin)) {
+                            Text("Settings")
+                        }
+                        
                         NavigationLink(destination: HelpView(viewRouter: viewRouter, fromHome: true)) {
                             Text("Help")
                         }
