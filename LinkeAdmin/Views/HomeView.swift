@@ -242,11 +242,19 @@ struct HomeView: View {
                         }
                         
                         Section(header: Text("Team Info")) {
+                            
+                            NavigationLink(destination: RenameView(title: "Team Name", currentValue: $team.teamName)) {
+                                Text("Team Name")
+                                Spacer()
+                                Text(team.teamName)
+                                    .foregroundColor(Color.gray)
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            
                             HStack {
                                 Text("Team Student Code")
                                 Spacer()
                                 Text(team.teamStudentCode).foregroundColor(Color.gray)
-                               
                             }
                             
                             HStack {

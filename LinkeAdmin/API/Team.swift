@@ -16,6 +16,28 @@ class Team: ObservableObject {
     @Published var students: [Student] = []
     @Published var studentGroups: [Group] = []
     @Published var admins: [Admin] = []
+    
+    @Published private var _teamName = ""
+    var teamName: String {
+        get {
+            _teamName
+        }
+        set {
+            _teamName = newValue
+            
+            Task {
+                let teamRef = Team.db.collection("team_data").document(teamID)
+                
+                do {
+                    try await teamRef.setData(["name": newValue], merge: true)
+                } catch {
+                    throw error
+                }
+            }
+            
+        }
+    }
+
     var teamID: String = ""
     
     private var teachersByStudentCount: [(String, Int, [(Student, String)])]?
@@ -129,6 +151,7 @@ class Team: ObservableObject {
             self.studentGroups = self.initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
             self.teamStudentCode = teamDictionary["student_code"] as! String
             self.teamAdminCode = teamDictionary["admin_code"] as! String
+            self.teamName = teamDictionary["name"] as? String ?? ""
         }
         
     }
@@ -189,6 +212,8 @@ class Team: ObservableObject {
                             founder: true))
         currentAdmin.founder = true
         
+        teamName = "\(currentAdmin.name)'s Team"
+        
         uploadData(data: createTeamData())
         UpdateValue.saveToLocal(key: "TEAM_ID", value: teamID)
         
@@ -244,11 +269,13 @@ class Team: ObservableObject {
     ///Creates a team document
     func createTeamData() -> [String: Any] {
         
+        let founder = admins.first(where: { $0.founder })!
         var teamData: [String: Any] = [:]
         teamData["id"] = teamID
         teamData["student_code"] = teamStudentCode
         teamData["admin_code"] = teamAdminCode
-        teamData["team_founder"] = admins.first(where: { $0.founder })!.id
+        teamData["team_founder"] = founder.id
+        teamData["name"] = teamName.count == 0 ? "\(founder.name)'s Team" : teamName
         
         var studentArray: [String] = []
         for student in students {
@@ -472,9 +499,8 @@ class Team: ObservableObject {
     ///Initializes students array, given all students' IDs.
     func initStudents(studentIDs: [String]) async throws -> [Student] {
         let collectionRef = Team.db.collection("student_data")
-        
+
         var students: [Student] = []
-        
         for studentID in studentIDs {
             do {
                 let doc = try await collectionRef.document(studentID).getDocument()
