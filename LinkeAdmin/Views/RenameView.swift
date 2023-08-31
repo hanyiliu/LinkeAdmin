@@ -32,6 +32,7 @@ struct RenameView: View {
                     }
                 }
             }
+
         }.navigationBarTitle(title, displayMode: .inline)
         .onDisappear {
             if !newValue.isEmpty {

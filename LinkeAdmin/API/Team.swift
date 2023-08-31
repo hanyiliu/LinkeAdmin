@@ -17,6 +17,18 @@ class Team: ObservableObject {
     @Published var studentGroups: [Group] = []
     @Published var admins: [Admin] = []
     
+    @Published private var _sortOption: SortOption = .lastName
+    var sortOption: SortOption {
+        get {
+            _sortOption
+        }
+        set {
+            _sortOption = newValue
+            sortStudents(by: newValue)
+            UpdateValue.saveToLocal(key: "SORT_OPTION", value: newValue)
+        }
+    }
+    
     @Published private var _teamName = ""
     var teamName: String {
         get {
@@ -60,6 +72,7 @@ class Team: ObservableObject {
         viewRouter.currentPage = .loading
         Team.started = true
         print("Starting to load team.")
+        
         //Check if user has a team ID stored in local.
         if let id = UpdateValue.loadFromLocal(key: "TEAM_ID", type: "String") as? String, id.count != 0 {
             teamID = id
@@ -152,7 +165,14 @@ class Team: ObservableObject {
             self.teamStudentCode = teamDictionary["student_code"] as! String
             self.teamAdminCode = teamDictionary["admin_code"] as! String
             self.teamName = teamDictionary["name"] as? String ?? ""
+            
+            if let sortOption = UpdateValue.loadFromLocal(key: "SORT_OPTION", type: "SortOption") as? SortOption {
+                self.sortOption = sortOption
+            } else {
+                self.sortStudents(by: self.sortOption)
+            }
         }
+        
         
     }
     
@@ -164,6 +184,7 @@ class Team: ObservableObject {
             do {
                 if let teamDictionary = try await fetchData() {
                     try await initializeTeam(teamDictionary: teamDictionary)
+                    
                 }
             } catch {
                 print("Error trying to initialize team dictionary: \(error)")
@@ -380,7 +401,34 @@ class Team: ObservableObject {
         }
     }
 
+    func sortStudents(by sortOption: SortOption) {
+        switch sortOption {
+        case .status:
+            // Sort students by status
+            students.sort { student1, student2 in
+                return student1.status < student2.status
+            }
 
+        case .lastName:
+            // Sort students by last name
+            students.sort { student1, student2 in
+                return student1.getLastName() < student2.getLastName()
+            }
+        case .firstName:
+            // Sort students by first name
+            students.sort { student1, student2 in
+                student1.getFirstName() < student2.getFirstName()
+            }
+        case .lastUpdated:
+            // Sort students by last updated
+            students.sort { student1, student2 in
+                student1.lastUpdated < student2.lastUpdated
+            }
+        }
+        
+        // Notify that the data has changed
+        refresh.toggle()
+    }
     
     ///Create new empty group
     func createGroup(name: String, founderID: String) {
@@ -566,3 +614,22 @@ class Team: ObservableObject {
         return studentGroups
     }
 }
+
+enum SortOption: String, CaseIterable, Identifiable, Codable {
+    case status = "Status"
+    case lastName = "Last Name"
+    case firstName = "First Name"
+    case lastUpdated = "Last Updated"
+    
+    var id: SortOption { self }
+    
+    enum CodingKeys: CodingKey {
+        case rawValue
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(rawValue, forKey: .rawValue)
+    }
+}
+

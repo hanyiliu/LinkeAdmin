@@ -26,6 +26,8 @@ struct HomeView: View {
     @State private var showCreateGroupAlert = false //For entering new group name
     @State private var enteredGroupName = "" //---
     
+    @State private var isSortByActionSheetPresented = false
+    
     @State private var fakeStudentCount = 0
     @State private var fakeAdminCount = 0
     
@@ -33,20 +35,21 @@ struct HomeView: View {
         let symbol: String
         let color: Color
         
-        if student.lastUpdated < Calendar.current.date(byAdding: .day, value: -7, to: Date())! {
+        switch student.status {
+        case .outdated:
             symbol = "questionmark.circle.fill"
             color = Color.gray
-        } else if student.hasMissingAssignments {
+        case .hasMissingAssignments:
             symbol = "exclamationmark.circle.fill"
             color = Color.red
-        } else if student.hasUpcomingAssignments {
+        case .hasUpcomingAssignments:
             symbol = "exclamationmark.circle.fill"
             color = Color.yellow
-        } else {
+        case .upToDate:
             symbol = "checkmark.circle.fill"
             color = Color.green
         }
-        
+
         return Image(systemName: symbol)
             .foregroundColor(color)
     }
@@ -186,11 +189,20 @@ struct HomeView: View {
                             }
                         }
                         
-                        Section(header: Text("Team Students")) {
+                        Section(header: HStack {
+                            Text("Team Students\(team.students.count > 0 ? " - \(team.students.count) " + (team.students.count == 1 ? "student" : "students") : "")")
+                            Spacer()
+                            Button(action: {
+                                isSortByActionSheetPresented = true
+                            }) {
+                                Text("Sort By")
+                                Image(systemName: "arrow.up.arrow.down.circle")
+                            }
+                        }) {
                             if(team.students.count == 0) {
                                 HStack {
                                     Spacer()
-                                    Text("Tell your students to join with the student code!")
+                                    Text("Tell your students tojoin with the student code!")
                                         .foregroundColor(Color.gray)
                                         .multilineTextAlignment(.center)
                                     Spacer()
@@ -200,6 +212,24 @@ struct HomeView: View {
                                     NavigationLink(destination: StudentView(student: student)) {
                                         HomeView.studentStatusImage(for: student)
                                         Text(student.name)
+                                        Spacer()
+                                        switch student.status {
+                                        case .outdated(let lastUpdated):
+                                            let daysAgo = Calendar.current.dateComponents([.day], from: lastUpdated, to: Date()).day ?? 0
+                                            Text("\(daysAgo) \(daysAgo == 1 ? "day" : "days") ago")
+                                                .foregroundColor(.gray)
+                                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                        case .hasMissingAssignments(let count):
+                                            Text("\(count) missing")
+                                                .foregroundColor(.red)
+                                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                        case .hasUpcomingAssignments(let count):
+                                            Text("\(count) upcoming")
+                                                .foregroundColor(.yellow)
+                                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                        case .upToDate:
+                                            EmptyView()
+                                        }
                                     }
                                     .swipeActions {
                                         Button(role: .destructive) {
@@ -213,6 +243,22 @@ struct HomeView: View {
                                 }
  
                             }
+                        }.actionSheet(isPresented: $isSortByActionSheetPresented) {
+                            ActionSheet(title: Text("Sort By:"), buttons: [
+                                .default(Text("Status"), action: {
+                                    team.sortOption = .status
+                                }),
+                                .default(Text("Last Name"), action: {
+                                    team.sortOption = .lastName
+                                }),
+                                .default(Text("First Name"), action: {
+                                    team.sortOption = .firstName
+                                }),
+                                .default(Text("Last Updated"), action: {
+                                    team.sortOption = .lastUpdated
+                                }),
+                                .cancel()
+                            ])
                         }
                         
                         Section(header: Text("Team Admins")) {
@@ -244,7 +290,7 @@ struct HomeView: View {
                         Section(header: Text("Team Info")) {
                             
                             NavigationLink(destination: RenameView(title: "Team Name", currentValue: $team.teamName)) {
-                                Text("Team Name")
+                                Text("Name")
                                 Spacer()
                                 Text(team.teamName)
                                     .foregroundColor(Color.gray)
@@ -252,13 +298,13 @@ struct HomeView: View {
                             }
                             
                             HStack {
-                                Text("Team Student Code")
+                                Text("Student Code")
                                 Spacer()
                                 Text(team.teamStudentCode).foregroundColor(Color.gray)
                             }
                             
                             HStack {
-                                Text("Team Admin Code")
+                                Text("Admin Code")
                                 Spacer()
                                 Text(team.teamAdminCode).foregroundColor(Color.gray)
                                 
@@ -342,82 +388,82 @@ struct HomeView: View {
                             )
                         }
                     }
-//                    
-//                    Section(header: Text("REMOVE AT RELEASE")) {
-//                        Button("Add fake student to team") {
-//                            //Create fake dictionary
-//                            let studentID = "0000\(fakeStudentCount)"
-//                            var studentDictionary: [String: Any] = [:]
-//                            studentDictionary["name"] = "Student \(fakeStudentCount)"
-//                            studentDictionary["id"] = studentID
-//                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
-//                            studentDictionary["last_updated"] = Date()
-//                            let classroomCount = fakeStudentCount / 3
-//                            let randomInt = Int.random(in: 0...2)
-//                            var classroomArray: [[String: Any]] = []
-//                            var classroom: [String: Any] = ["name": "Math", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Math Teacher"]
-//                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": Int.random(in: (14 - 2)...(14 + 5))]] as [String : Any]
-//                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
-//                            let assignment3 = ["name": "Homework 3", "id": "3", "due_date": ["year": 2023, "month": 8, "day": 18]] as [String : Any]
-//                            let assignment4 = ["name": "Homework 4", "id": "4", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
-//                            let assignment5 = ["name": "Homework 5", "id": "5", "due_date": ["year": 2023, "month": 8, "day": 14]] as [String : Any]
-//                            classroom["assignment"] = [assignment1, assignment2, assignment3, assignment4, assignment5]
-//                            classroomArray.append(classroom)
-//                            
-//                            var classroom2: [String: Any] = ["name": "English", "id": "12346\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4441", "teacher_name" : "English Teacher"]
-//                            classroomArray.append(classroom2)
-//                            
-//                            var classroom3: [String: Any] = ["name": "History", "id": "12356\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4442", "teacher_name" : "History Teacher"]
-//                            classroomArray.append(classroom3)
-//                            
-//                            var classroom4: [String: Any] = ["name": "Science", "id": "12246\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4443", "teacher_name" : "Science Teacher"]
-//                            classroomArray.append(classroom4)
-//
-//                            studentDictionary["classroom"] = classroomArray
-//                            //End fake dictionary creation
-//
-//                            fakeStudentCount += 1
-//
-//                            print("Fake Student: Trying to upload data to Firestore")
-//                            let studentDocument = Team.db.collection("student_data").document(studentID)
-//                            studentDocument.setData(studentDictionary)
-//
-//                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-//                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
-//                                if let error = error {
-//                                    print("Error appending ID to students array: \(error)")
-//                                } else {
-//                                    print("ID appended to students array successfully")
-//                                }
-//                            }
-//                        }
-//
-//                        Button("Add fake admin to team") {
-//                            //Create fake dictionary
-//                            let adminID = "9999\(fakeAdminCount)"
-//                            var adminDictionary: [String: Any] = [:]
-//                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
-//                            adminDictionary["id"] = adminID
-//                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
-//
-//                            //End fake dictionary creation
-//
-//                            fakeAdminCount += 1
-//
-//                            print("Fake Admin: Trying to upload data to Firestore")
-//                            let adminDocument = Team.db.collection("admin_data").document(adminID)
-//                            adminDocument.setData(adminDictionary)
-//
-//                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-//                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
-//                                if let error = error {
-//                                    print("Error appending ID to admins array: \(error)")
-//                                } else {
-//                                    print("ID appended to admins array successfully")
-//                                }
-//                            }
-//                        }
-//                    }
+                    
+                    Section(header: Text("REMOVE AT RELEASE")) {
+                        Button("Add fake student to team") {
+                            //Create fake dictionary
+                            let studentID = "0000\(fakeStudentCount)"
+                            var studentDictionary: [String: Any] = [:]
+                            studentDictionary["name"] = "Student \(fakeStudentCount)"
+                            studentDictionary["id"] = studentID
+                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
+                            studentDictionary["last_updated"] = Date()
+                            let classroomCount = fakeStudentCount / 3
+                            let randomInt = Int.random(in: 0...2)
+                            var classroomArray: [[String: Any]] = []
+                            var classroom: [String: Any] = ["name": "Math", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Math Teacher"]
+                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": Int.random(in: (14 - 2)...(14 + 5))]] as [String : Any]
+                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
+                            let assignment3 = ["name": "Homework 3", "id": "3", "due_date": ["year": 2023, "month": 8, "day": 18]] as [String : Any]
+                            let assignment4 = ["name": "Homework 4", "id": "4", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
+                            let assignment5 = ["name": "Homework 5", "id": "5", "due_date": ["year": 2023, "month": 8, "day": 14]] as [String : Any]
+                            classroom["assignment"] = [assignment1, assignment2, assignment3, assignment4, assignment5]
+                            classroomArray.append(classroom)
+                            
+                            var classroom2: [String: Any] = ["name": "English", "id": "12346\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4441", "teacher_name" : "English Teacher"]
+                            classroomArray.append(classroom2)
+                            
+                            var classroom3: [String: Any] = ["name": "History", "id": "12356\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4442", "teacher_name" : "History Teacher"]
+                            classroomArray.append(classroom3)
+                            
+                            var classroom4: [String: Any] = ["name": "Science", "id": "12246\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4443", "teacher_name" : "Science Teacher"]
+                            classroomArray.append(classroom4)
+
+                            studentDictionary["classroom"] = classroomArray
+                            //End fake dictionary creation
+
+                            fakeStudentCount += 1
+
+                            print("Fake Student: Trying to upload data to Firestore")
+                            let studentDocument = Team.db.collection("student_data").document(studentID)
+                            studentDocument.setData(studentDictionary)
+
+                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
+                                if let error = error {
+                                    print("Error appending ID to students array: \(error)")
+                                } else {
+                                    print("ID appended to students array successfully")
+                                }
+                            }
+                        }
+
+                        Button("Add fake admin to team") {
+                            //Create fake dictionary
+                            let adminID = "9999\(fakeAdminCount)"
+                            var adminDictionary: [String: Any] = [:]
+                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
+                            adminDictionary["id"] = adminID
+                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
+
+                            //End fake dictionary creation
+
+                            fakeAdminCount += 1
+
+                            print("Fake Admin: Trying to upload data to Firestore")
+                            let adminDocument = Team.db.collection("admin_data").document(adminID)
+                            adminDocument.setData(adminDictionary)
+
+                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
+                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
+                                if let error = error {
+                                    print("Error appending ID to admins array: \(error)")
+                                } else {
+                                    print("ID appended to admins array successfully")
+                                }
+                            }
+                        }
+                    }
                     Logo()
                     
                 }

@@ -25,4 +25,20 @@ class User: ObservableObject, Identifiable, Hashable {
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
+    
+    func getFirstName() -> String {
+        let components = name.components(separatedBy: " ")
+        if let firstName = components.first {
+            return firstName
+        }
+        return name
+    }
+    
+    func getLastName() -> String {
+        let components = name.components(separatedBy: " ")
+        if components.count > 1 {
+            return components.last ?? ""
+        }
+        return ""
+    }
 }

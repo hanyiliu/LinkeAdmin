@@ -74,6 +74,12 @@ struct UpdateValue: Any {
             UserDefaults.standard.set(encoded, forKey: "\(userID)_\(key)")
         }
     }
+    
+    static func saveToLocal(key: String, value: SortOption) {
+        if let encoded = try? JSONEncoder().encode(value) {
+            UserDefaults.standard.set(encoded, forKey: "\(userID)_\(key)")
+        }
+    }
 
     static func loadFromLocal(key: String, type: String) -> Any? {
         if let data = UserDefaults.standard.data(forKey: "\(userID)_\(key)") {
@@ -94,6 +100,13 @@ struct UpdateValue: Any {
                 }
             case "Int":
                 if let decoded = try? JSONDecoder().decode(Int.self, from: data
+                ) {
+                    return decoded
+                } else {
+                    return nil
+                }
+            case "SortOption":
+                if let decoded = try? JSONDecoder().decode(SortOption.self, from: data
                 ) {
                     return decoded
                 } else {
