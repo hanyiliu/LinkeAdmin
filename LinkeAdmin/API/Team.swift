@@ -622,14 +622,6 @@ enum SortOption: String, CaseIterable, Identifiable, Codable {
     case lastUpdated = "Last Updated"
     
     var id: SortOption { self }
-    
-    enum CodingKeys: CodingKey {
-        case rawValue
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(rawValue, forKey: .rawValue)
-    }
 }
+
 

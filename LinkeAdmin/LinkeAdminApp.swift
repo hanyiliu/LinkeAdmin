@@ -76,7 +76,9 @@ struct UpdateValue: Any {
     }
     
     static func saveToLocal(key: String, value: SortOption) {
+
         if let encoded = try? JSONEncoder().encode(value) {
+
             UserDefaults.standard.set(encoded, forKey: "\(userID)_\(key)")
         }
     }
@@ -106,12 +108,16 @@ struct UpdateValue: Any {
                     return nil
                 }
             case "SortOption":
-                if let decoded = try? JSONDecoder().decode(SortOption.self, from: data
-                ) {
-                    return decoded
+
+                if let decoded = try? JSONDecoder().decode(String.self, from: data),
+                   let sortOption = SortOption(rawValue: decoded) {
+
+                    return sortOption
                 } else {
+
                     return nil
                 }
+
             default:
                 return nil
                 
