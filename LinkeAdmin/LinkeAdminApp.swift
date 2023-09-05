@@ -8,6 +8,7 @@
 import SwiftUI
 import GoogleSignIn
 import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct LinkeAdminApp: App {
@@ -16,38 +17,31 @@ struct LinkeAdminApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(viewRouter: viewRouter)
-            
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
                 }
-            
                 .onAppear {
-                    
                     FirebaseApp.configure()
                     
-                    //Check Google authentication.
+                    // Check Google authentication.
                     GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
-                        
                         if error != nil || user == nil {
                             // Show the app's signed-out state.
                             print("User not previously logged in")
                             viewRouter.currentPage = .googleSignIn
                         } else {
                             // Show the app's signed-in state.
-                            
                             print("User previously logged in")
                             viewRouter.currentPage = .loadingSignedIn
                         }
                     }
-
                 }
-            
         }
+
     }
-    
-    
-    
 }
+
+
 
 struct UpdateValue: Any {
     static private var userID = GIDSignIn.sharedInstance.currentUser?.userID ?? ""

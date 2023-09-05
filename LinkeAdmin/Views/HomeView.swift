@@ -26,10 +26,15 @@ struct HomeView: View {
     @State private var showCreateGroupAlert = false //For entering new group name
     @State private var enteredGroupName = "" //---
     
+    @State private var latestAppVersion = ""
+    @State private var showUpdateAppAlert = false
+        
+    
     @State private var isSortByActionSheetPresented = false
     
     @State private var fakeStudentCount = 0
     @State private var fakeAdminCount = 0
+    
     
     static func studentStatusImage(for student: Student) -> some View {
         let symbol: String
@@ -52,6 +57,33 @@ struct HomeView: View {
 
         return Image(systemName: symbol)
             .foregroundColor(color)
+    }
+    
+    
+    private func fetchLatestAppVersion() {
+        let infoRef = Team.db.collection("app_data").document("info")
+        print("Checking app version.")
+        infoRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if let latestVersion = document.data()?["latest_version"] as? String {
+                    self.latestAppVersion = latestVersion
+                    
+                    // Compare with the current app version
+                    if let currentAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                        if latestVersion != currentAppVersion {
+                            // Display an alert if the versions do not match
+                            showUpdateAppAlert = true
+                        }
+                    } else {
+                        print("Cannot get app version.")
+                    }
+                } else {
+                    print("Cannot find latest version in Firebase.")
+                }
+            } else {
+                print("Document does not exist")
+            }
+        }
     }
     
     var body: some View {
@@ -148,39 +180,39 @@ struct HomeView: View {
                     
                     } else {
                         if(team.students.count != 0) {
-                            if(admin.founder) {
-                                Section(header: Text("Team Groups")) {
+                            Section(header: Text("Team Groups")) {
+                                if(admin.founder) {
                                     ForEach(team.studentGroups) { group in
                                         NavigationLink(destination: GroupView(group: group)) {
                                             Text(group.name)
                                         }
                                     }
                                     .onDelete(perform: team.deleteGroup)
-                                    Button("Create New Group") {
-                                        showCreateGroupAlert = true
-                                    }
-                                    .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
-                                        TextField("Enter Group Name", text: $enteredGroupName)
-                                        HStack {
-                                            Button("Cancel") {
-                                                showCreateGroupAlert = false
-                                            }
-                                            Button("Create") {
-                                                team.createGroup(name: enteredGroupName, founderID: admin.id)
-                                                team.refresh.toggle()
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                Section(header: Text("Team Groups")) {
+                                } else {
                                     ForEach(team.studentGroups.filter { $0.admins.contains(where: { $0.id == admin.id }) }) { group in
                                         NavigationLink(destination: GroupView(group: group)) {
                                             Text(group.name)
                                         }
                                     }
+                                    .onDelete(perform: team.deleteGroup)
+                                }
+                                Button("Create New Group") {
+                                    showCreateGroupAlert = true
+                                }
+                                .alert("Enter Group Name", isPresented: $showCreateGroupAlert) {
+                                    TextField("Enter Group Name", text: $enteredGroupName)
+                                    HStack {
+                                        Button("Cancel") {
+                                            showCreateGroupAlert = false
+                                        }
+                                        Button("Create") {
+                                            team.createGroup(name: enteredGroupName, founderID: admin.id)
+                                            team.refresh.toggle()
+                                        }
+                                    }
                                 }
                             }
+                            
                             
                             Section() {
                                 NavigationLink(destination: TeachersView(team: team, teachersByStudentCount: team.teachersByStudentSorted)) {
@@ -477,11 +509,27 @@ struct HomeView: View {
                 })
                 
             }.navigationViewStyle(StackNavigationViewStyle())
-                .onChange(of: scenePhase) { newPhase in
-                    if newPhase == .active {
-                        team.refreshTeam()
-                    }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    team.refreshTeam()
                 }
+            }
+            .onAppear() {
+                fetchLatestAppVersion()
+            }
+            .alert(isPresented: $showUpdateAppAlert) {
+                Alert(
+                    title: Text("Update Required"),
+                    message: Text("A new version of the app is available. Please update to the latest version."),
+                    primaryButton: .default(Text("Update"), action: {
+                        // Open the App Store for the user to update the app
+                        if let appStoreURL = URL(string: "https://apps.apple.com/app/linke-for-admins/id6461600839") {
+                            UIApplication.shared.open(appStoreURL)
+                        }
+                    }),
+                    secondaryButton: .cancel()
+                )
+            }
             
             
         } else {

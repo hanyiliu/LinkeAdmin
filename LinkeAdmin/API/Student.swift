@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import FirebaseFirestore
 
 class Student: User {
     
@@ -26,24 +27,29 @@ class Student: User {
     }
     
     var missingAssignmentsCount: Int {
-        return classrooms.reduce(0) { result, classroom in
-            return result + classroom.missingAssignments.filter { assignment in
-                assignment.dueDate != nil && assignment.dueDate! < Date()
-            }.count
-        }
+        return classrooms
+            .filter { !$0.hiddenByStudent }
+            .reduce(0) { result, classroom in
+                return result + classroom.missingAssignments.filter { assignment in
+                    assignment.dueDate != nil && assignment.dueDate! < Date()
+                }.count
+            }
     }
 
     var upcomingAssignmentsCount: Int {
-        return classrooms.reduce(0) { result, classroom in
-            return result + classroom.upcomingAssignments.filter { assignment in
-                if let dueDate = assignment.dueDate {
-                    let twoDaysFromNow = Calendar.current.date(byAdding: .day, value: 2, to: Date())!
-                    return dueDate >= Date() && dueDate <= twoDaysFromNow
-                }
-                return false
-            }.count
-        }
+        return classrooms
+            .filter { !$0.hiddenByStudent }
+            .reduce(0) { result, classroom in
+                return result + classroom.upcomingAssignments.filter { assignment in
+                    if let dueDate = assignment.dueDate {
+                        let twoDaysFromNow = Calendar.current.date(byAdding: .day, value: 2, to: Date())!
+                        return dueDate >= Date() && dueDate <= twoDaysFromNow
+                    }
+                    return false
+                }.count
+            }
     }
+
 
     init(name: String, id: String, email: String, classrooms: [Classroom], lastUpdated: Date) {
         self.classrooms = classrooms
