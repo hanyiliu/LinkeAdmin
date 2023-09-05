@@ -523,7 +523,7 @@ struct HomeView: View {
                     message: Text("A new version of the app is available. Please update to the latest version."),
                     primaryButton: .default(Text("Update"), action: {
                         // Open the App Store for the user to update the app
-                        if let appStoreURL = URL(string: "https://apps.apple.com/app/linke-for-admins/id6461600839") {
+                        if let appStoreURL = URL(string: Bundle.main.infoDictionary!["APPSTORE_URL"] as! String) {
                             UIApplication.shared.open(appStoreURL)
                         }
                     }),
