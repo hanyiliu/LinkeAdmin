@@ -65,7 +65,7 @@ struct HomeView: View {
         print("Checking app version.")
         infoRef.getDocument { (document, error) in
             if let document = document, document.exists {
-                if let latestVersion = document.data()?["latest_version"] as? String {
+                if let latestVersion = document.data()?["latest_version_admin"] as? String {
                     self.latestAppVersion = latestVersion
                     
                     // Compare with the current app version
