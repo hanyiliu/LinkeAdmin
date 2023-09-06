@@ -13,12 +13,11 @@ struct TeachersView: View {
     
     @State private var selectedTeacher: String?
     @State private var isDropdownVisible = false
-    @State var teachersByStudentCount: [(String, Int, [(Student, String)])]
     
     var body: some View {
         Form {
             Section(header: Text("Teachers")) {
-                ForEach(teachersByStudentCount, id: \.0) { teacher, studentCount, studentInfo in
+                ForEach(team.studentsSortedByTeachers, id: \.0) { teacher, studentCount, studentInfo in
                     HStack {
                         Text(teacher)
                         Spacer()

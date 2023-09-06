@@ -24,12 +24,12 @@ class Group: ObservableObject, Identifiable {
     }
     
     ///Create an empty Group.
-    init(team: Team, name: String, id: String) {
+    init(team: Team, name: String, id: String, currentAdmin: Admin) {
         self.team = team
         self.name = name
         self.id = id
         self.students = []
-        self.admins = [team.admins.first(where: { $0.founder == true })!]
+        self.admins = [currentAdmin]
         
         Task {
             await uploadData()

@@ -12,6 +12,8 @@
 		0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2F47AB2A3CDF070037002F /* GroupView.swift */; };
 		0B34266B2A88634A00E9CF83 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B34266A2A88634A00E9CF83 /* HelpView.swift */; };
 		0B34266D2A8DE89200E9CF83 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B34266C2A8DE89200E9CF83 /* SettingsView.swift */; };
+		0B5973BE2AA918260092363F /* StatusItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5973BD2AA918260092363F /* StatusItemView.swift */; };
+		0B5973C12AA918580092363F /* Logo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5973C02AA918580092363F /* Logo.swift */; };
 		0B72196F2A4BF18200D691AB /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B72196E2A4BF18200D691AB /* StoreKit.framework */; };
 		0BDB4DDD2A292E7D00B0AEE1 /* LinkeAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */; };
 		0BDB4DDF2A292E7D00B0AEE1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB4DDE2A292E7D00B0AEE1 /* ContentView.swift */; };
@@ -42,6 +44,8 @@
 		0B2F47AB2A3CDF070037002F /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		0B34266A2A88634A00E9CF83 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		0B34266C2A8DE89200E9CF83 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0B5973BD2AA918260092363F /* StatusItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemView.swift; sourceTree = "<group>"; };
+		0B5973C02AA918580092363F /* Logo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logo.swift; sourceTree = "<group>"; };
 		0B72196E2A4BF18200D691AB /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0BDB4DD92A292E7D00B0AEE1 /* LinkeAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinkeAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDB4DDC2A292E7D00B0AEE1 /* LinkeAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkeAdminApp.swift; sourceTree = "<group>"; };
@@ -83,6 +87,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B5973BF2AA9182D0092363F /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				0B5973BD2AA918260092363F /* StatusItemView.swift */,
+				0B5973C02AA918580092363F /* Logo.swift */,
+			);
+			path = Subviews;
+			sourceTree = "<group>";
+		};
 		0BDB4DD02A292E7D00B0AEE1 = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +140,7 @@
 		0BDB4DF12A292F3600B0AEE1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0B5973BF2AA9182D0092363F /* Subviews */,
 				0BDB4DF22A292F4800B0AEE1 /* GoogleSignInView.swift */,
 				0B1BCA452A421B4000D2A068 /* TeachersView.swift */,
 				0BDB4E052A295A8C00B0AEE1 /* StudentView.swift */,
@@ -299,6 +313,8 @@
 				0B1BCA462A421B4000D2A068 /* TeachersView.swift in Sources */,
 				0BDB4DF02A292F1800B0AEE1 /* ViewRouter.swift in Sources */,
 				0BF85D8A2A9FCCA200FA73EF /* RenameView.swift in Sources */,
+				0B5973BE2AA918260092363F /* StatusItemView.swift in Sources */,
+				0B5973C12AA918580092363F /* Logo.swift in Sources */,
 				0BDB4E062A295A8C00B0AEE1 /* StudentView.swift in Sources */,
 				0B2F47AC2A3CDF070037002F /* GroupView.swift in Sources */,
 				0BEFD78E2A2D6C39004A892F /* ClassroomView.swift in Sources */,
@@ -459,7 +475,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hanyiliu.LinkeAdmin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -491,7 +507,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hanyiliu.LinkeAdmin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

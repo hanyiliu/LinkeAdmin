@@ -100,7 +100,13 @@ struct AddStudentsSheet: View {
     init(group: Group, selectedStudents: Binding<Set<Student>>) {
         self.group = group
         self._selectedStudents = selectedStudents
-        self._availableStudents = State(initialValue: group.team.students.filter { !group.students.contains($0) })
+        
+        var filteredStudents = group.team.students.filter { !group.students.contains($0) }
+        filteredStudents.sort { student1, student2 in
+            return student1.getLastName() < student2.getLastName()
+        }
+
+        self._availableStudents = State(initialValue: filteredStudents)
     }
     
     var body: some View {

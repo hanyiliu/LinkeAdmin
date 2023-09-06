@@ -206,7 +206,7 @@ struct HomeView: View {
                                             showCreateGroupAlert = false
                                         }
                                         Button("Create") {
-                                            team.createGroup(name: enteredGroupName, founderID: admin.id)
+                                            team.createGroup(name: enteredGroupName, currentAdmin: admin)
                                             team.refresh.toggle()
                                         }
                                     }
@@ -215,9 +215,10 @@ struct HomeView: View {
                             
                             
                             Section() {
-                                NavigationLink(destination: TeachersView(team: team, teachersByStudentCount: team.teachersByStudentSorted)) {
+                                NavigationLink(destination: TeachersView(team: team)) {
                                     Text("View Students by Teachers")
                                 }
+                                .disabled(!team.loaded)
                             }
                         }
                         
@@ -292,6 +293,21 @@ struct HomeView: View {
                                 .cancel()
                             ])
                         }
+                    
+                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: 10) {
+                                StatusItemView(symbol: "questionmark.circle.fill", color: .gray, text: "- Not Updated")
+
+                                StatusItemView(symbol: "exclamationmark.circle.fill", color: .red, text: "- Has Missing")
+                            }
+                            Spacer()
+                            VStack(alignment: .leading, spacing: 10) {
+                                StatusItemView(symbol: "exclamationmark.circle.fill", color: .yellow, text: "- Has Upcoming")
+                                
+                                StatusItemView(symbol: "checkmark.circle.fill", color: .green, text: "- All Good")
+                            }
+                        }
+                        
                         
                         Section(header: Text("Team Admins")) {
                             if(team.admins.count == 1) {
@@ -420,82 +436,6 @@ struct HomeView: View {
                             )
                         }
                     }
-                    
-                    Section(header: Text("REMOVE AT RELEASE")) {
-                        Button("Add fake student to team") {
-                            //Create fake dictionary
-                            let studentID = "0000\(fakeStudentCount)"
-                            var studentDictionary: [String: Any] = [:]
-                            studentDictionary["name"] = "Student \(fakeStudentCount)"
-                            studentDictionary["id"] = studentID
-                            studentDictionary["email"] = "john.doe\(fakeStudentCount)@example.com"
-                            studentDictionary["last_updated"] = Date()
-                            let classroomCount = fakeStudentCount / 3
-                            let randomInt = Int.random(in: 0...2)
-                            var classroomArray: [[String: Any]] = []
-                            var classroom: [String: Any] = ["name": "Math", "id": "12345\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4440", "teacher_name" : "Math Teacher"]
-                            let assignment1 = ["name": "Homework 1", "id": "1", "due_date": ["year": 2023, "month": 8, "day": Int.random(in: (14 - 2)...(14 + 5))]] as [String : Any]
-                            let assignment2 = ["name": "Homework 2", "id": "2", "due_date": ["year": 2023, "month": 8, "day": 20]] as [String : Any]
-                            let assignment3 = ["name": "Homework 3", "id": "3", "due_date": ["year": 2023, "month": 8, "day": 18]] as [String : Any]
-                            let assignment4 = ["name": "Homework 4", "id": "4", "due_date": ["year": 2023, "month": 8, "day": 13]] as [String : Any]
-                            let assignment5 = ["name": "Homework 5", "id": "5", "due_date": ["year": 2023, "month": 8, "day": 14]] as [String : Any]
-                            classroom["assignment"] = [assignment1, assignment2, assignment3, assignment4, assignment5]
-                            classroomArray.append(classroom)
-                            
-                            var classroom2: [String: Any] = ["name": "English", "id": "12346\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4441", "teacher_name" : "English Teacher"]
-                            classroomArray.append(classroom2)
-                            
-                            var classroom3: [String: Any] = ["name": "History", "id": "12356\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4442", "teacher_name" : "History Teacher"]
-                            classroomArray.append(classroom3)
-                            
-                            var classroom4: [String: Any] = ["name": "Science", "id": "12246\(fakeStudentCount / 5 + randomInt)", "teacher_id" : "4443", "teacher_name" : "Science Teacher"]
-                            classroomArray.append(classroom4)
-
-                            studentDictionary["classroom"] = classroomArray
-                            //End fake dictionary creation
-
-                            fakeStudentCount += 1
-
-                            print("Fake Student: Trying to upload data to Firestore")
-                            let studentDocument = Team.db.collection("student_data").document(studentID)
-                            studentDocument.setData(studentDictionary)
-
-                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-                            teamDocument.updateData(["students": FieldValue.arrayUnion([studentID])]) { error in
-                                if let error = error {
-                                    print("Error appending ID to students array: \(error)")
-                                } else {
-                                    print("ID appended to students array successfully")
-                                }
-                            }
-                        }
-
-                        Button("Add fake admin to team") {
-                            //Create fake dictionary
-                            let adminID = "9999\(fakeAdminCount)"
-                            var adminDictionary: [String: Any] = [:]
-                            adminDictionary["name"] = "Jake Dan \(fakeAdminCount)"
-                            adminDictionary["id"] = adminID
-                            adminDictionary["email"] = "jake.dan\(fakeAdminCount)@example.com"
-
-                            //End fake dictionary creation
-
-                            fakeAdminCount += 1
-
-                            print("Fake Admin: Trying to upload data to Firestore")
-                            let adminDocument = Team.db.collection("admin_data").document(adminID)
-                            adminDocument.setData(adminDictionary)
-
-                            let teamDocument = Team.db.collection("team_data").document(team.teamID)
-                            teamDocument.updateData(["admins": FieldValue.arrayUnion([adminID])]) { error in
-                                if let error = error {
-                                    print("Error appending ID to admins array: \(error)")
-                                } else {
-                                    print("ID appended to admins array successfully")
-                                }
-                            }
-                        }
-                    }
                     Logo()
                     
                 }
@@ -539,29 +479,4 @@ struct HomeView: View {
         }
     }
     
-}
-
-struct Logo: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    var body: some View {
-        Section {
-            HStack(alignment: .bottom) {
-                VStack {
-                    Image("GrayIcon")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: UIScreen.main.bounds.size.width/4)
-                    Text("Linke for Admins v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String)")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 11.0))
-                    Text("Ⓒ Hanyi Liu 2023")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 11.0))
-                }
-            }
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            .listRowInsets(EdgeInsets())
-            .background(Color(.systemGroupedBackground))
-        
-    }
 }

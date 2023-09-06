@@ -17,6 +17,7 @@ class Team: ObservableObject {
     @Published var studentGroups: [Group] = []
     @Published var admins: [Admin] = []
     
+    
     @Published private var _sortOption: SortOption = .lastName
     var sortOption: SortOption {
         get {
@@ -52,25 +53,24 @@ class Team: ObservableObject {
 
     var teamID: String = ""
     
-    private var teachersByStudentCount: [(String, Int, [(Student, String)])]?
-    var teachersByStudentSorted: [(String, Int, [(Student, String)])] {
+    private var _studentsSortedByTeachers: [(String, Int, [(Student, String)])]?
+    var studentsSortedByTeachers: [(String, Int, [(Student, String)])] {
         get {
-            if teachersByStudentCount == nil {
-                teachersByStudentCount = getTeachersByStudentCount()
+            if _studentsSortedByTeachers == nil {
+                _studentsSortedByTeachers = getStudentsSortedByTeachers()
             }
-            return teachersByStudentCount!
+            return _studentsSortedByTeachers!
         }
         set {
-            teachersByStudentCount = newValue
+            _studentsSortedByTeachers = newValue
         }
     }
     
-    static var started = false
+    @Published var loaded = false
     static let db = Firestore.firestore()
     
     init(currentAdmin: Admin, viewRouter: ViewRouter) {
         viewRouter.currentPage = .loading
-        Team.started = true
         print("Starting to load team.")
         
         //Check if user has a team ID stored in local.
@@ -150,8 +150,15 @@ class Team: ObservableObject {
     func initializeTeam(teamDictionary: [String: Any], currentAdmin: Admin? = nil) async throws {
         teamID = teamDictionary["id"] as! String
         
-        let students = try await initStudents(studentIDs: teamDictionary["students"] as! [String])
-        let admins = try await initAdmins(adminIDs: teamDictionary["admins"] as! [String])
+        DispatchQueue.main.async {
+            self.teamStudentCode = teamDictionary["student_code"] as! String
+            self.teamAdminCode = teamDictionary["admin_code"] as! String
+            self.teamName = teamDictionary["name"] as? String ?? ""
+        }
+        
+        try await initStudents(studentIDs: teamDictionary["students"] as! [String])
+        try await initAdmins(adminIDs: teamDictionary["admins"] as! [String])
+        
         admins.first(where: { $0.id == teamDictionary["team_founder"] as! String })?.founder = true
         
         if currentAdmin != nil, currentAdmin!.id == teamDictionary["team_founder"] as! String {
@@ -159,18 +166,14 @@ class Team: ObservableObject {
         }
         
         DispatchQueue.main.async {
-            self.students = students
-            self.admins = admins
             self.studentGroups = self.initGroups(groups: teamDictionary["groups"] as! [[String : Any]])
-            self.teamStudentCode = teamDictionary["student_code"] as! String
-            self.teamAdminCode = teamDictionary["admin_code"] as! String
-            self.teamName = teamDictionary["name"] as? String ?? ""
             
             if let sortOption = UpdateValue.loadFromLocal(key: "SORT_OPTION", type: "SortOption") as? SortOption {
                 self.sortOption = sortOption
             } else {
                 self.sortStudents(by: self.sortOption)
             }
+            self.loaded = true
         }
         
         
@@ -179,12 +182,14 @@ class Team: ObservableObject {
     ///Refresh team
     func refreshTeam() {
         guard teamAdminCode != "" else { return }
-        teachersByStudentCount = nil
+        loaded = false
+        _studentsSortedByTeachers = nil
+        students = []
+        admins = []
         Task {
             do {
                 if let teamDictionary = try await fetchData() {
                     try await initializeTeam(teamDictionary: teamDictionary)
-                    
                 }
             } catch {
                 print("Error trying to initialize team dictionary: \(error)")
@@ -394,7 +399,7 @@ class Team: ObservableObject {
     func removeStudent(studentID: String) {
         if let index = students.firstIndex(where: { $0.id == studentID }) {
             students.remove(at: index)
-            removeStudentFromTeachers(studentID: studentID)
+            removeStudentFromTeachersSorted(studentID: studentID)
             // Call your removeStudentID function here
             let documentRef = Team.db.collection("team_data").document(teamID)
             removeStudentID(document: documentRef, studentID: studentID)
@@ -431,8 +436,8 @@ class Team: ObservableObject {
     }
     
     ///Create new empty group
-    func createGroup(name: String, founderID: String) {
-        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)"))
+    func createGroup(name: String, currentAdmin: Admin) {
+        studentGroups.append(Group(team: self, name: name, id: "\(studentGroups.count)", currentAdmin: currentAdmin))
     }
     
     ///Delete group
@@ -472,7 +477,8 @@ class Team: ObservableObject {
     }
     
     ///Return all teacher's names with their corresponding # of students.
-    func getTeachersByStudentCount() -> [(String, Int, [(Student, String)])] {
+    func getStudentsSortedByTeachers() -> [(String, Int, [(Student, String)])] {
+        print("Sorting called")
         var teachersWithStudents: [(String, Int, [(Student, String)])] = []
         
         // Create a dictionary to store teachers and their associated students
@@ -481,7 +487,8 @@ class Team: ObservableObject {
         // Iterate over all students
         for student in students {
             // Iterate over each student's classrooms
-            for classroom in student.classrooms {
+            for classroom in student.classrooms.filter { !$0.hiddenByStudent } {
+                
                 // Append the student to the teacher's array in the dictionary
                 teacherStudentsDict[classroom.teacherName, default: []].append((student, classroom.name))
             }
@@ -501,24 +508,21 @@ class Team: ObservableObject {
     }
     
     /// Remove student from teachersByStudentSorted and update counts.
-    func removeStudentFromTeachers(studentID: String) {
-        // Check if the teachersByStudentCount variable is initialized
-        guard var teachersByStudentCount = teachersByStudentCount else {
+    func removeStudentFromTeachersSorted(studentID: String) {
+        // Check if the sorted list is initialized
+        guard _studentsSortedByTeachers != nil else {
             return
         }
         
         // Iterate through each teacher's students
-        for (index, (teacherName, _, students)) in teachersByStudentCount.enumerated() {
+        for (index, (teacherName, _, students)) in _studentsSortedByTeachers!.enumerated() {
             let updatedStudents = students.filter { student, _ in
                 student.id != studentID
             }
             let updatedStudentCount = updatedStudents.count
             
-            teachersByStudentCount[index] = (teacherName, updatedStudentCount, updatedStudents)
+            _studentsSortedByTeachers![index] = (teacherName, updatedStudentCount, updatedStudents)
         }
-        
-        // Update the teachersByStudentSorted variable
-        self.teachersByStudentCount = teachersByStudentCount
     }
 
 
@@ -545,39 +549,39 @@ class Team: ObservableObject {
     }
     
     ///Initializes students array, given all students' IDs.
-    func initStudents(studentIDs: [String]) async throws -> [Student] {
+    func initStudents(studentIDs: [String]) async throws {
         let collectionRef = Team.db.collection("student_data")
 
-        var students: [Student] = []
         for studentID in studentIDs {
             do {
                 let doc = try await collectionRef.document(studentID).getDocument()
                 if let data = doc.data() {
-                    students.append(Student(studentDictionary: data))
+                    DispatchQueue.main.async {
+                        self.students.append(Student(studentDictionary: data))
+                    }
                 }
             } catch {
                 throw error
             }
         }
-        return students
     }
     
     ///Initializes admins array, given all admins' IDs.
-    func initAdmins(adminIDs: [String]) async throws -> [Admin] {
+    func initAdmins(adminIDs: [String]) async throws {
         let collectionRef = Team.db.collection("admin_data")
-        
-        var admins: [Admin] = []
+      
         for adminID in adminIDs {
             do {
                 let doc = try await collectionRef.document(adminID).getDocument()
                 if let data = doc.data() {
-                    admins.append(Admin(adminDictionary: data))
+                    DispatchQueue.main.async {
+                        self.admins.append(Admin(adminDictionary: data))
+                    }
                 }
             } catch {
                 throw error
             }
         }
-        return admins
     }
     
     ///Initializes groups, given all groups data.
